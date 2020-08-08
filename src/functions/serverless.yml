@@ -1,0 +1,33 @@
+org: gclindsey
+app: building-permits-analysis
+service: building-permits-analysis
+
+custom:
+  bucket: aws-permits-analysis
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: dev
+  region: us-east-1
+  environment:
+    S3_BUCKET: ${self:custom.bucket}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:PutObjectAcl
+      Resource: "arn:aws:s3:::${self:custom.bucket}/*"
+
+package:
+  exclude:
+    - .venv/*
+
+functions:
+  fetchData:
+    handler: fetch_data.fetch_data
+    environment:
+      S3_KEY: "test/"
+    layers: 
+      - arn:aws:lambda:us-east-1:531868584498:layer:fetchDataLibs:1
+    timeout: 300
