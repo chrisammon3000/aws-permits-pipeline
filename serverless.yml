@@ -3,13 +3,15 @@ service: fetchDataToBucket
 frameworkVersion: ">=1.1.0"
 
 custom:
-  bucket: <your-bucket-name>
+  bucket: aws-permits-analysis
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: python3.7
   stage: dev
-  region: us-west-1
+  region: us-east-1
+  environment:
+    S3_BUCKET: ${self:custom.bucket}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -18,7 +20,7 @@ provider:
       Resource: "arn:aws:s3:::${self:custom.bucket}/*"
 
 functions:
-  save:
-    handler: handler.save
+  fetchData:
+    handler: src/functions/fetch_data.fetch_data
     environment:
-      BUCKET: ${self:custom.bucket}
+      S3_KEY: ""
