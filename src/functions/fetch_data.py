@@ -7,6 +7,9 @@ import boto3
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+#s3 = boto3.resource('s3')
+#bucket = s3.Bucket(BUCKET_NAME)
+
 def download_csv(url, file_path):
     try:
         response = requests.get(url)
@@ -30,10 +33,8 @@ def fetch_data(event, context):
     timestamp = int(time.time())
     file = f'{timestamp}-permits.csv'
 
-    #s3 = boto3.resource('s3')
-    #bucket = s3.Bucket(BUCKET_NAME)
-    key = f'raw/{file}'
 
+    key = f'raw/{file}'
     file_path = f'./tmp/{file}'
 
     download_csv(url, file_path)
