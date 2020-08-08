@@ -35,8 +35,8 @@ def download_csv(url, file_path):
 
 def fetch_data(event, context):
 
-    #url = "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
-    url = "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj"
+    url = "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
+    #url = "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj"
 
     timestamp = int(time.time())
 
@@ -47,7 +47,8 @@ def fetch_data(event, context):
     download_csv(url, file_path)
 
     try:
-        bucket.upload_file(file_path, S3_KEY)
+        bucket.upload_file(file_path, S3_KEY + file)
+        logger.info(f"File uploaded to bucket: {S3_KEY + file}")
     except Exception as e:
         logger.info(f"Error uploading to S3: {e}")
         
