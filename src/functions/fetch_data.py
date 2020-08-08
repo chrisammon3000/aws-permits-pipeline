@@ -1,18 +1,32 @@
+import logging
 import csv
 import time
 import requests
 import boto3
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
 def download_csv(url, file_path):
-    with requests.get(url, stream=True) as response:
+    try:
+        response = requests.get(url)
+    except Exception as e:
+        logger.info(f"Error retrieving url: {e}")
+    try:
         with open(file_path, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=1024):
-                f.write(chunk)
+            f.write(response.content)
+            logger.info(f"File created: {file_path}")
+    except Exception as e:
+        logger.info(f"Error writing CSV: {e}")
+
+    return
+
 
 def fetch_data(event, context):
 
-    url = "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
+    #url = "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
 
+    url = "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj"
     timestamp = int(time.time())
     file = f'{timestamp}-permits.csv'
 
@@ -20,12 +34,10 @@ def fetch_data(event, context):
     #bucket = s3.Bucket(BUCKET_NAME)
     key = f'raw/{file}'
 
-    lambda_path = f'./tmp/{file}'
+    file_path = f'./tmp/{file}'
 
-    r = requests.get(url)
-
-    download_csv(url, lambda_path)
-
+    download_csv(url, file_path)
+        
     return {
         "message": "Success"
     }
