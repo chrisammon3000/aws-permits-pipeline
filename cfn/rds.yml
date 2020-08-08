@@ -1,0 +1,17 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "Deploys a single RDS instance."
+Parameters:
+  DBInstanceClass:
+    Type: String
+    Default: "db.t3.small"
+Resources:
+  PermitsDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceClass: 
+        Ref: DBInstanceClass
+      
+  
+Transform:
+  
+Outputs:
