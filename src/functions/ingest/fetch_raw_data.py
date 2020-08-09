@@ -10,6 +10,8 @@ logger.setLevel(logging.INFO)
 
 S3_BUCKET = os.environ['S3_BUCKET']
 S3_KEY = os.environ['S3_KEY']
+URL = os.environ['PERMITS_URL']
+#URL = "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj"
 
 s3 = boto3.resource('s3')
 bucket = s3.Bucket(S3_BUCKET)
@@ -35,16 +37,13 @@ def download_csv(url, file_path):
 
 def fetch_raw_data(event, context):
 
-    url = "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
-    #url = "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj"
-
     timestamp = int(time.time())
 
     file = f'{timestamp}-permits.csv'
 
     file_path = '/tmp/'+ file
 
-    download_csv(url, file_path)
+    download_csv(URL, file_path)
 
     try:
         bucket.upload_file(file_path, S3_KEY + file)
