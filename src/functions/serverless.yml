@@ -12,7 +12,7 @@ provider:
   region: us-east-1
   environment:
     S3_BUCKET: ${self:custom.bucket}
-    
+    PERMITS_URL: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
   iamRoleStatements:
     - Effect: Allow
       Action:
