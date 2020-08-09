@@ -12,6 +12,7 @@ provider:
   region: us-east-1
   environment:
     S3_BUCKET: ${self:custom.bucket}
+    
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -25,14 +26,14 @@ package:
 
 functions:
   fetchRawData:
-    handler: fetchRawData.fetch_raw_data
+    handler: ingest/fetch_raw_data.fetch_raw_data
     environment:
       S3_KEY: "raw/"
     layers: 
       - arn:aws:lambda:us-east-1:531868584498:layer:fetchDataLibs:1
     timeout: 300
   transformRawData:
-    handler: transformRawData.transform_raw_data
+    handler: ingest/transform_raw_data.transform_raw_data
     events:
       - s3:
           bucket: ${self:custom.bucket}
