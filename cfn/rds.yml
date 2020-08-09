@@ -10,9 +10,6 @@ Parameters:
   DBEngineVersion:
     Type: String
     Default: "11.4"
-  DBSourceRegion:
-    Type: String
-    Default: "us-east-1"
   DBInstanceClass:
     Type: String
     Default: "db.t3.small"
