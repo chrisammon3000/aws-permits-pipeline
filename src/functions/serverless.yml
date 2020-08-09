@@ -25,18 +25,21 @@ package:
 
 functions:
   fetchData:
-    handler: fetch_data.fetch_data
+    handler: raw_fetch.raw_fetch
     environment:
       S3_KEY: "raw/"
     layers: 
       - arn:aws:lambda:us-east-1:531868584498:layer:fetchDataLibs:1
     timeout: 300
   loadData:
-    handler: load_data.load_data
+    handler: raw_transform.raw_transform
     events:
       - s3:
           bucket: ${self:custom.bucket}
           event: s3:ObjectCreated:*
+          rules:
+            - prefix: raw/
+            - suffix: .csv
     environment:
       S3_KEY: "raw/"
     layers:
