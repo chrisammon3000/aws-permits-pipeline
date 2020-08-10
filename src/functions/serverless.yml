@@ -13,16 +13,16 @@ provider:
   environment:
     S3_BUCKET: ${self:custom.bucket}
     PERMITS_URL: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
+    DB_NAME: ${ssm:/permits/db_name}
+    DB_USER: ${ssm:/permits/db_user}
+    DB_PASSWORD: ${ssm:/permits/db_password~true}
+    DB_PORT: 5432
   iamRoleStatements:
     - Effect: Allow
       Action:
         - s3:PutObject
         - s3:PutObjectAcl
       Resource: "arn:aws:s3:::${self:custom.bucket}/*"
-
-package:
-  exclude:
-    - .venv/*
 
 functions:
   fetchRawData:
