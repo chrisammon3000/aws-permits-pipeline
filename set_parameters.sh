@@ -3,7 +3,7 @@
 aws ssm put-parameter \
   --name /permits/db_name \
   --type String \
-  --value "permits-data" \
+  --value "permits" \
   --description "Database name" \
   --overwrite
 

@@ -2,6 +2,10 @@ org: gclindsey
 app: building-permits-analysis
 service: building-permits-analysis
 
+package:
+  exclude:
+    - src/functions/ingest/events/*
+
 custom:
   bucket: aws-permits-analysis
 
@@ -12,6 +16,8 @@ provider:
   region: us-east-1
   environment:
     S3_BUCKET: ${self:custom.bucket}
+    S3_RAW_FOLDER: "raw/"
+    S3_PROCESSED_FOLDER: "processed/"
     PERMITS_URL: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
     DB_NAME: ${ssm:/permits/db_name}
     DB_USER: ${ssm:/permits/db_user}
@@ -22,13 +28,15 @@ provider:
       Action:
         - s3:PutObject
         - s3:PutObjectAcl
-      Resource: "arn:aws:s3:::${self:custom.bucket}/*"
+        - s3:PutBucketNotification
+        - s3:GetObject
+        - s3:ListBucket
+        - s3:GetObjectAcl
+      Resource: arn:aws:s3:::${self:custom.bucket}/*
 
 functions:
   fetchRawData:
     handler: ingest/fetch_raw_data.fetch_raw_data
-    environment:
-      S3_KEY: "raw/"
     layers: 
       - arn:aws:lambda:us-east-1:531868584498:layer:fetchDataLibs:1
     timeout: 300
@@ -41,7 +49,6 @@ functions:
           rules:
             - prefix: raw/
             - suffix: .csv
-    environment:
-      S3_KEY: "processed/"
+          existing: true
     layers:
       - arn:aws:lambda:us-east-1:531868584498:layer:pandasLibs:1
