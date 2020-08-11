@@ -38,7 +38,7 @@ functions:
   fetchRawData:
     handler: ingest/fetch_raw_data.fetch_raw_data
     layers: 
-      - arn:aws:lambda:us-east-1:531868584498:layer:fetchDataLibs:1
+      - arn:aws:lambda:us-east-1:531868584498:layer:requestsLayer-p36-p37-p38:1
     timeout: 300
   transformRawData:
     handler: ingest/transform_raw_data.transform_raw_data
@@ -51,4 +51,4 @@ functions:
             - suffix: .csv
           existing: true
     layers:
-      - arn:aws:lambda:us-east-1:531868584498:layer:pandasLibs:1
+      - arn:aws:lambda:us-east-1:531868584498:layer:pandasLayer-p37:1
