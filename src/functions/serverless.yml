@@ -11,7 +11,8 @@ custom:
   s3_raw_folder: "data/raw/"
   s3_int_folder: "data/interim/"
   s3_processed_folder: "data/processed/"
-  permits_url: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
+  #permits_url: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
+  permits_url: "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj"
   filename: "permits"
   
 provider:
