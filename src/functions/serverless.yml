@@ -2,9 +2,9 @@ org: gclindsey
 app: building-permits-analysis
 service: building-permits-analysis
 
-# package:
-#   exclude:
-#     - src/functions/ingest/events/*
+package:
+  exclude:
+    - src/functions/ingest/load_raw_data_rds.py
 
 custom:
   bucket: aws-permits-analysis
