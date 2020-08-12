@@ -19,6 +19,8 @@ def load_raw_data_rds(event, context):
         # Read data from S3
         data_key = record['s3']['object']['key']
         logger.info(f'Raw Key: "{data_key}"')
+
+        
         
 
     return {

@@ -17,6 +17,27 @@ FILENAME = os.environ['FILENAME']
 s3 = boto3.resource('s3')
 bucket = s3.Bucket(S3_BUCKET)
 
+def fetch_raw_data(event, context):
+
+    timestamp = int(time.time())
+
+    file = f'{timestamp}-{FILENAME}-raw.csv'
+
+    file_path = '/tmp/'+ file
+
+    download_csv(URL, file_path)
+
+    try:
+        bucket.upload_file(file_path, S3_RAW_FOLDER + file)
+        logger.info(f'File "{file_path}" uploaded as S3 object: "{S3_RAW_FOLDER + file}"')
+    except Exception as e:
+        logger.info(f"Error uploading to S3: {e}")
+        
+    return {
+        "message": "SUCCESS"
+    }
+
+
 def download_csv(url, file_path):
     
     # Make request
@@ -35,24 +56,3 @@ def download_csv(url, file_path):
         logger.info(f"Error writing CSV: {e}")
 
     return
-
-
-def fetch_raw_data(event, context):
-
-    timestamp = int(time.time())
-
-    file = f'{timestamp}-{FILENAME}.csv'
-
-    file_path = '/tmp/'+ file
-
-    download_csv(URL, file_path)
-
-    try:
-        bucket.upload_file(file_path, S3_RAW_FOLDER + file)
-        logger.info(f'File "{file_path}" uploaded as S3 object: "{S3_RAW_FOLDER + file}"')
-    except Exception as e:
-        logger.info(f"Error uploading to S3: {e}")
-        
-    return {
-        "message": "SUCCESS"
-    }

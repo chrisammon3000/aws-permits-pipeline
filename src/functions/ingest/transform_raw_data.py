@@ -49,7 +49,7 @@ def transform_raw_data(event, context):
 
         logger.info(data['full_address'].head())
 
-        # Write to
+        # Write CSV to S3
         int_key = S3_INT_FOLDER + data_key.split('/')[-1] 
         logger.info(f'Int Key: "{int_key}"')
         csv_buffer = StringIO()

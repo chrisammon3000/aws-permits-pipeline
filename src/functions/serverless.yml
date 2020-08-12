@@ -14,6 +14,10 @@ custom:
   permits_url: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
   #permits_url: "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj"
   filename: "permits"
+  db_name: ${ssm:/permits/db_name}
+  db_user: ${ssm:/permits/db_user}
+  db_password: ${ssm:/permits/db_password~true}
+  db_port: 5432
   
 provider:
   name: aws
@@ -48,6 +52,7 @@ functions:
     layers: 
       - arn:aws:lambda:us-east-1:531868584498:layer:requestsLayer-p36-p37-p38:1
     timeout: 300
+    memorySize: 2048
   transformRawData:
     handler: ingest/transform_raw_data.transform_raw_data
     events:
@@ -61,3 +66,4 @@ functions:
     layers:
       - arn:aws:lambda:us-east-1:531868584498:layer:pandasLayer-p37:1
     timeout: 300
+    memorySize: 2048

@@ -1,9 +1,9 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: "Deploys a single RDS instance."
+Description: "Deploys a single PostgreSQL RDS instance."
 Parameters:
   DBInstanceIdentifier:
     Type: String
-    Default: "permits-instance"
+    Default: "serverless-permits-rds-instance"
   DBEngine:
     Type: String
     Default: "postgres"
@@ -12,7 +12,7 @@ Parameters:
     Default: "11.4"
   DBInstanceClass:
     Type: String
-    Default: "db.t3.small"
+    Default: "db.t2.micro"
   DBStorageType:
     Type: String
     Default: "gp2"
