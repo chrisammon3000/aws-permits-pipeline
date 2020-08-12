@@ -34,7 +34,7 @@ provider:
     DB_NAME: ${ssm:/permits/db_name}
     DB_USER: ${ssm:/permits/db_user}
     DB_PASSWORD: ${ssm:/permits/db_password~true}
-    DB_PORT: 5432
+    DB_PORT: ${self:custom.db_port}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -66,4 +66,4 @@ functions:
     layers:
       - arn:aws:lambda:us-east-1:531868584498:layer:pandasLayer-p37:1
     timeout: 300
-    memorySize: 2048
+    memorySize: 3008
