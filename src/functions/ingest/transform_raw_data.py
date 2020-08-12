@@ -21,7 +21,7 @@ def transform_raw_data(event, context):
 
         # Read data from S3
         data_key = record['s3']['object']['key']
-        logger.info(f'Raw Key: "{data_key}"')
+        logger.info(f'Data Key: "{data_key}"')
 
         logger.info(f'Fetching S3 object: "{S3_BUCKET + "/" + data_key}"...')
         data_object = s3.get_object(Bucket=S3_BUCKET, Key=data_key)
@@ -37,27 +37,38 @@ def transform_raw_data(event, context):
         # Rename columns
         cols = list(data.columns)
         logger.info(cols)
-
         data.columns = map(replace_chars, cols)
-        logger.info(data.columns)
+        logger.info(list(data.columns))
 
-        # Apply transform
-        logger.info(data[["address_start", "street_direction", "street_name", "street_suffix", "suffix_direction",
-                      "zip_code"]].head())
+        # # Apply transform
+        # logger.info(data[["address_start", "street_direction", "street_name", "street_suffix", "suffix_direction",
+        #               "zip_code"]].head())
+        # data = create_full_address(data)
+        # logger.info(data['full_address'].head())
 
-        data = create_full_address(data)
+        # Save to tmp folder
+        file = data_key.split("/")[-1]
+        file = '-'.join(file.split("-")[:-1] + ["interim.csv"])
+        file_path = '/tmp/'+ file
+        logger.info(f'Saving "{file_path}"...')
+        data.to_csv(file_path, index=False)
+        logger.info(f'Saved "{file_path}".')
 
-        logger.info(data['full_address'].head())
+        # Upload to S3
+        s3_object = S3_INT_FOLDER + file_path.split("/")[-1]
+        logger.info(f'Saving S3 object: "{S3_BUCKET + "/" + s3_object}"...')
+        s3.upload_file(file_path, S3_BUCKET, s3_object)
+        logger.info(f'Saved S3 object: "{S3_BUCKET + "/" + s3_object}".')
 
-        # Write CSV to S3
-        int_key = S3_INT_FOLDER + data_key.split('/')[-1] 
-        logger.info(f'Int Key: "{int_key}"')
-        csv_buffer = StringIO()
-        data.to_csv(csv_buffer, header=True, index=False)
-        csv_buffer.seek(0)
-        body = csv_buffer.getvalue()
-        s3.put_object(Bucket=S3_BUCKET, Body=body, Key=int_key)
-        logger.info(f'Successful PUT on S3: "{S3_BUCKET + "/" + int_key}"')
+        # # Write CSV to S3
+        # int_key = S3_INT_FOLDER + data_key.split('/')[-1] 
+        # logger.info(f'Int Key: "{int_key}"')
+        # csv_buffer = StringIO()
+        # data.to_csv(csv_buffer, header=True, index=False)
+        # csv_buffer.seek(0)
+        # body = csv_buffer.getvalue()
+        # s3.put_object(Bucket=S3_BUCKET, Body=body, Key=int_key)
+        # logger.info(f'Successful PUT on S3: "{S3_BUCKET + "/" + int_key}"')
 
     return {
         "message": "SUCCESS"
