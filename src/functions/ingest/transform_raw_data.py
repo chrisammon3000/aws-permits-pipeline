@@ -29,7 +29,8 @@ def transform_raw_data(event, context):
 
         data = BytesIO(data_object['Body'].read())
         logger.info(f'Reading into pandas dataframe: "{S3_BUCKET + "/" + data_key}"...')
-        data = pd.read_csv(data, encoding='utf8')
+        data_reader = pd.read_csv(data, encoding='utf8', iterator=True, chunksize=100)
+        data = pd.concat(data_reader, ignore_index=True)
 
         #logger.info(f'Reading CSV: "s3://{S3_BUCKET}/{data_key}"')
         #data = pd.read_csv("s3://" + S3_BUCKET + "/" + data_key)
