@@ -118,3 +118,4 @@ venv/
 src/functions/ingest/events/
 layers/
 scripts/
+.shred

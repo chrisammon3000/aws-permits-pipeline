@@ -10,8 +10,9 @@ logger.setLevel(logging.INFO)
 
 S3_BUCKET = os.environ['S3_BUCKET']
 S3_RAW_FOLDER = os.environ['S3_RAW_FOLDER']
-#URL = os.environ['PERMITS_URL']
-URL = "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj"
+URL = os.environ['PERMITS_URL']
+FILENAME = os.environ['FILENAME']
+#URL = "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj" # Titanic dataset for testing
 
 s3 = boto3.resource('s3')
 bucket = s3.Bucket(S3_BUCKET)
@@ -20,15 +21,16 @@ def download_csv(url, file_path):
     
     # Make request
     try:
+        logger.info(f'Retrieving url: "{URL}"')
         response = requests.get(url)
     except Exception as e:
-        logger.info(f"Error retrieving url: {e}")
+        logger.info(f'Error retrieving url: {e}')
     
     # Fetch CSV
     try:
         with open(file_path, 'wb') as f:
             f.write(response.content)
-            logger.info(f"File created: {file_path}")
+            logger.info(f'File created: "{file_path}"')
     except Exception as e:
         logger.info(f"Error writing CSV: {e}")
 
@@ -39,7 +41,7 @@ def fetch_raw_data(event, context):
 
     timestamp = int(time.time())
 
-    file = f'{timestamp}-titanic.csv'
+    file = f'{timestamp}-{FILENAME}.csv'
 
     file_path = '/tmp/'+ file
 
@@ -47,7 +49,7 @@ def fetch_raw_data(event, context):
 
     try:
         bucket.upload_file(file_path, S3_RAW_FOLDER + file)
-        logger.info(f"File uploaded to bucket: {S3_RAW_FOLDER + file}")
+        logger.info(f'File "{file_path}" uploaded as S3 object: "{S3_RAW_FOLDER + file}"')
     except Exception as e:
         logger.info(f"Error uploading to S3: {e}")
         

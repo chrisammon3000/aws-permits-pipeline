@@ -8,7 +8,12 @@ service: building-permits-analysis
 
 custom:
   bucket: aws-permits-analysis
-
+  s3_raw_folder: "data/raw/"
+  s3_int_folder: "data/interim/"
+  s3_processed_folder: "data/processed/"
+  permits_url: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
+  filename: "permits"
+  
 provider:
   name: aws
   runtime: python3.7
@@ -16,9 +21,11 @@ provider:
   region: us-east-1
   environment:
     S3_BUCKET: ${self:custom.bucket}
-    S3_RAW_FOLDER: "raw/"
-    S3_PROCESSED_FOLDER: "processed/"
-    PERMITS_URL: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
+    S3_RAW_FOLDER: ${self:custom.s3_raw_folder}
+    S3_INT_FOLDER: ${self:custom.s3_int_folder}
+    S3_PROCESSED_FOLDER: ${self:custom.s3_processed_folder}
+    PERMITS_URL: ${self:custom.permits_url}
+    FILENAME: ${self:custom.filename}
     DB_NAME: ${ssm:/permits/db_name}
     DB_USER: ${ssm:/permits/db_user}
     DB_PASSWORD: ${ssm:/permits/db_password~true}
@@ -47,8 +54,9 @@ functions:
           bucket: ${self:custom.bucket}
           event: s3:ObjectCreated:*
           rules:
-            - prefix: raw/
+            - prefix: ${self:custom.s3_raw_folder}
             - suffix: .csv
           existing: true
     layers:
       - arn:aws:lambda:us-east-1:531868584498:layer:pandasLayer-p37:1
+    timeout: 300
