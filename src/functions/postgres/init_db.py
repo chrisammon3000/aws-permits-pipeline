@@ -1,0 +1,3 @@
+from sql_queries import songplay_table_create
+
+print(songplay_table_create)

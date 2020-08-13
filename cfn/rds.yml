@@ -21,7 +21,7 @@ Parameters:
     Default: 20
   DBName:
     Type: String
-    Default: permits
+    Default: permitsDB
   DBUser:
     Type: String
     Default: postgres

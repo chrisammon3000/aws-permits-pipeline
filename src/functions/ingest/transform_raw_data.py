@@ -32,20 +32,19 @@ def transform_raw_data(event, context):
         data_reader = pd.read_csv(data, encoding='utf8', iterator=True, chunksize=100000)
         data = pd.concat(data_reader, ignore_index=True)
 
-        #logger.info(f'Reading CSV: "s3://{S3_BUCKET}/{data_key}"')
-        #data = pd.read_csv("s3://" + S3_BUCKET + "/" + data_key)
-
         # Rename columns
         cols = list(data.columns)
         logger.info(cols)
         data.columns = map(replace_chars, cols)
         logger.info(list(data.columns))
 
-        # # Apply transform
-        # logger.info(data[["address_start", "street_direction", "street_name", "street_suffix", "suffix_direction",
-        #               "zip_code"]].head())
-        # data = create_full_address(data)
-        # logger.info(data['full_address'].head())
+        # Apply transform
+        address_columns = ["address_start", "street_direction", "street_name", "street_suffix", "suffix_direction",
+                      "zip_code"]
+        logger.info(f'Concatenating columns: {address_columns}...')
+        data = create_full_address(data)
+        logger.info("Columns concatenated")
+        logger.info(data['full_address'].head())
 
         # Save to tmp folder
         file = data_key.split("/")[-1]
@@ -59,17 +58,7 @@ def transform_raw_data(event, context):
         s3_object = S3_INT_FOLDER + file_path.split("/")[-1]
         logger.info(f'Saving S3 object: "{S3_BUCKET + "/" + s3_object}"...')
         s3.upload_file(file_path, S3_BUCKET, s3_object)
-        logger.info(f'Saved S3 object: "{S3_BUCKET + "/" + s3_object}".')
-
-        # # Write CSV to S3
-        # int_key = S3_INT_FOLDER + data_key.split('/')[-1] 
-        # logger.info(f'Int Key: "{int_key}"')
-        # csv_buffer = StringIO()
-        # data.to_csv(csv_buffer, header=True, index=False)
-        # csv_buffer.seek(0)
-        # body = csv_buffer.getvalue()
-        # s3.put_object(Bucket=S3_BUCKET, Body=body, Key=int_key)
-        # logger.info(f'Successful PUT on S3: "{S3_BUCKET + "/" + int_key}"')
+        logger.info(f'Saved S3 object: "{S3_BUCKET + "/" + s3_object}"')
 
     return {
         "message": "SUCCESS"
