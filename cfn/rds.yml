@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "Deploys a single PostgreSQL RDS instance."
+Parameters:
+  DBInstanceIdentifier:
+    Type: String
+    Default: "serverless-permits-rds-instance"
+  DBEngine:
+    Type: String
+    Default: "postgres"
+  DBEngineVersion:
+    Type: String
+    Default: "11.4"
+  DBInstanceClass:
+    Type: String
+    Default: "db.t2.micro"
+  DBStorageType:
+    Type: String
+    Default: "gp2"
+  DBAllocatedStorage:
+    Type: Number
+    Default: 20
+  DBName:
+    Type: String
+    Default: permits
+  DBUser:
+    Type: String
+    Default: postgres
+  DBPassword:
+    Type: String
+    Default: postgres5ecret
+    NoEcho: True
+Resources:
+  PermitsDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Ref DBInstanceIdentifier
+      DBName: !Ref DBName
+      AllocatedStorage: !Ref DBAllocatedStorage
+      DBInstanceClass: !Ref DBInstanceClass
+      StorageType: !Ref DBStorageType
+      Engine: !Ref DBEngine
+      EngineVersion: !Ref DBEngineVersion
+      MasterUsername: !Ref DBUser
+      MasterUserPassword: !Ref DBPassword
+      Tags:
+        - Key: App
+          Value: "building-permits-aws-pipeline"
+Outputs:
+  EndpointDB:
+    Description: "Endpoint of the newly created RDS instance"
+    Value: !GetAtt PermitsDB.Endpoint.Address
+  PortDB:
+    Description: "Port of the newly created RDS instance"
+    Value: !GetAtt PermitsDB.Endpoint.Port
