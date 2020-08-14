@@ -40,16 +40,16 @@ def transform_raw_data(event, context):
         logger.info(list(data.columns))
 
         # Apply transform
-        address_columns = ["address_start", "street_direction", "street_name", "street_suffix", "suffix_direction",
-                      "zip_code"]
-        logger.info(f'Concatenating columns: {address_columns}...')
-        data = create_full_address(data)
-        logger.info(data['full_address'].head())
-        logger.info(f'New columns:\n{list(data.columns)}')
+        # address_columns = ["address_start", "street_direction", "street_name", "street_suffix", "suffix_direction",
+        #               "zip_code"]
+        # logger.info(f'Concatenating columns: {address_columns}...')
+        # data = create_full_address(data)
+        # logger.info(data['full_address'].head())
+        # logger.info(f'New columns:\n{list(data.columns)}')
 
-        col = "Principal Middle Name"
-        data.drop(col, inplace=True)
-        logger.info(f'Dropped column "{col}"')
+        # col = "principal_middle_name"
+        # data.drop(col, axis=1, inplace=True)
+        # logger.info(f'Dropped column "{col}"')
 
         # Save to tmp folder
         file = data_key.split("/")[-1]

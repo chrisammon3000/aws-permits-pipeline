@@ -1,6 +1,7 @@
 # CREATE TABLES
 permits_raw_table_create = ("""
     GRANT ALL PRIVILEGES ON DATABASE "permitsDB" TO postgres;
+    DROP TABLE IF EXISTS permits_raw;
     CREATE TABLE permits_raw (
         "Assessor Book" TEXT,
         "Assessor Page" TEXT,
@@ -43,7 +44,6 @@ permits_raw_table_create = ("""
         "License Type" TEXT,
         "License #" TEXT,
         "Principal First Name" TEXT,
-        "Principal Middle Name" TEXT,
         "Principal Last Name" TEXT,
         "License Expiration Date" TEXT,
         "Applicant First Name" TEXT,
