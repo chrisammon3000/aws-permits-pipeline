@@ -104,7 +104,7 @@ test_postgis_tiger_output = "1 Devonshire Pl 02109"
 
 # COPY DATA
 copy_raw_permits = ("""
-
+    COPY {} FROM STDIN WITH (FORMAT CSV, HEADER TRUE);
 """)
 
 
@@ -112,7 +112,9 @@ copy_raw_permits = ("""
 # concatenate_address
 # geocode
 
-
+# Query Lists 
+install_ext_queries = [install_ext_aws_s3, install_ext_postgis]
+create_table_queries = [permits_raw_table_create]
 
 
 

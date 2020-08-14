@@ -2,10 +2,6 @@ org: gclindsey
 app: building-permits-analysis
 service: ingest-permits-data
 
-package:
-  exclude:
-    - src/functions/ingest/load_raw_data_rds.py
-
 custom:
   bucket: aws-permits-analysis
   s3_raw_folder: "data/raw/"
@@ -14,10 +10,6 @@ custom:
   permits_url: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
   #permits_url: "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj"
   filename: "permits"
-  db_name: ${ssm:/permits/db_name}
-  db_user: ${ssm:/permits/db_user}
-  db_password: ${ssm:/permits/db_password~true}
-  db_port: 5432
   
 provider:
   name: aws
@@ -31,10 +23,6 @@ provider:
     S3_PROCESSED_FOLDER: ${self:custom.s3_processed_folder}
     PERMITS_URL: ${self:custom.permits_url}
     FILENAME: ${self:custom.filename}
-    DB_NAME: ${ssm:/permits/db_name}
-    DB_USER: ${ssm:/permits/db_user}
-    DB_PASSWORD: ${ssm:/permits/db_password~true}
-    DB_PORT: ${self:custom.db_port}
   iamRoleStatements:
     - Effect: Allow
       Action:

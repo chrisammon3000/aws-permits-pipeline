@@ -12,7 +12,6 @@ S3_BUCKET = os.environ['S3_BUCKET']
 S3_RAW_FOLDER = os.environ['S3_RAW_FOLDER']
 URL = os.environ['PERMITS_URL']
 FILENAME = os.environ['FILENAME']
-#URL = "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj" # Titanic dataset for testing
 
 s3 = boto3.resource('s3')
 bucket = s3.Bucket(S3_BUCKET)
@@ -20,18 +19,22 @@ bucket = s3.Bucket(S3_BUCKET)
 def fetch_raw_data(event, context):
 
     timestamp = int(time.time())
-
     file = f'{timestamp}-{FILENAME}-raw.csv'
-
     file_path = '/tmp/'+ file
 
-    download_csv(URL, file_path)
+    try:
+        download_csv(URL, file_path)
+    except (requests.exceptions.HTTPError, requests.exceptions.RequestException) as err:
+        raise SystemExit(err)
 
     try:
         bucket.upload_file(file_path, S3_RAW_FOLDER + file)
         logger.info(f'File "{file_path}" uploaded as S3 object: "{S3_RAW_FOLDER + file}"')
     except Exception as e:
         logger.info(f"Error uploading to S3: {e}")
+        return {
+            "message": f"Error uploading to S3: {e}"
+        }
         
     return {
         "message": "SUCCESS"

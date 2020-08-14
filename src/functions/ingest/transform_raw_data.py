@@ -47,6 +47,10 @@ def transform_raw_data(event, context):
         logger.info(data['full_address'].head())
         logger.info(f'New columns:\n{list(data.columns)}')
 
+        col = "Principal Middle Name"
+        data.drop(col, inplace=True)
+        logger.info(f'Dropped column "{col}"')
+
         # Save to tmp folder
         file = data_key.split("/")[-1]
         file = '-'.join(file.split("-")[:-1] + ["interim.csv"])
