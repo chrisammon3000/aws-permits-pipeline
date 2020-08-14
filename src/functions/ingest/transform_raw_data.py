@@ -1,6 +1,6 @@
 import os
 import logging
-from io import BytesIO, StringIO
+from io import BytesIO
 import boto3
 import numpy as np
 import pandas as pd
@@ -36,6 +36,7 @@ def transform_raw_data(event, context):
         cols = list(data.columns)
         logger.info(cols)
         data.columns = map(replace_chars, cols)
+        logger.info("Successfully renamed columns")
         logger.info(list(data.columns))
 
         # Apply transform
@@ -43,8 +44,8 @@ def transform_raw_data(event, context):
                       "zip_code"]
         logger.info(f'Concatenating columns: {address_columns}...')
         data = create_full_address(data)
-        logger.info("Columns concatenated")
         logger.info(data['full_address'].head())
+        logger.info(f'New columns:\n{list(data.columns)}')
 
         # Save to tmp folder
         file = data_key.split("/")[-1]

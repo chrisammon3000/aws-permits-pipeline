@@ -1,6 +1,6 @@
 org: gclindsey
 app: building-permits-analysis
-service: building-permits-analysis
+service: ingest-permits-data
 
 package:
   exclude:
