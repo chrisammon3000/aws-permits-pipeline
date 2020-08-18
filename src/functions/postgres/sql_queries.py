@@ -44,6 +44,7 @@ permits_raw_table_create = ("""
         "License Type" TEXT,
         "License #" TEXT,
         "Principal First Name" TEXT,
+        "Principal Middle Name" TEXT,
         "Principal Last Name" TEXT,
         "License Expiration Date" TEXT,
         "Applicant First Name" TEXT,
@@ -62,11 +63,13 @@ permits_raw_table_create = ("""
         "Existing Code" TEXT,
         "Proposed Code" TEXT
     );
-    SET statement_timeout = '20s';
+    SET statement_timeout = '30s';
 """)
 
 # INSTALL EXTENSIONS
 install_ext_aws_s3 = "CREATE EXTENSION aws_s3 CASCADE;"
+
+# Don't forget IAM permissions
 
 install_ext_postgis = ("""
     SELECT current_user;
@@ -104,9 +107,21 @@ test_postgis_tiger_output = "1 Devonshire Pl 02109"
 
 # COPY DATA
 copy_raw_permits = ("""
-    COPY {} FROM STDIN WITH (FORMAT CSV, HEADER TRUE);
+    SELECT aws_s3.table_import_from_s3(
+    'permits_raw',
+    '',
+    '(FORMAT CSV)', 
+    aws_commons.create_s3_uri('aws-permits-analysis', '{}', 'us-east-1')
+    );
 """)
 
+# QUERIES
+list_columns_types_query = ("""
+    SELECT column_name, data_type
+    FROM   information_schema.columns
+    WHERE  table_name = 'permits_raw'
+    ORDER  BY ordinal_position;
+""")
 
 # FUNCTIONS
 # concatenate_address
