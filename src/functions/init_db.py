@@ -20,7 +20,7 @@ def init_db(event, context):
     for item in [msg, topic, subject]:
         logger.info(item)
     
-    if msg["Event Message"] in ['DB instance created', 'The DB instance has been restored from a DB snapshot', 'The DB instance has been started']:
+    if msg["Event Message"] in ['DB instance created']:
         print("Fetch data!!!")
 
     #print("INIT QUERY:\n", permits_raw_table_create)

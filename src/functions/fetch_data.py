@@ -16,7 +16,7 @@ FILENAME = os.environ['FILENAME']
 s3 = boto3.resource('s3')
 bucket = s3.Bucket(S3_BUCKET)
 
-def fetch_raw_data(event, context):
+def fetch_data(event, context):
 
     timestamp = int(time.time())
     file = f'{timestamp}-{FILENAME}-raw.csv'

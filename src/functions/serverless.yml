@@ -2,10 +2,6 @@ org: gclindsey
 app: building-permits-analysis
 service: serverless-permits-rds-pipeline
 
-# package:
-#   exclude:
-#     - src/functions/ingest/load_raw_data_rds.py
-
 custom:
   bucket: aws-permits-analysis
   s3_raw_folder: "data/raw/"
@@ -44,8 +40,8 @@ provider:
       Resource: arn:aws:s3:::${self:custom.bucket}/*
 
 functions:
-  fetchRawData: # fetch the data from internet
-    handler: fetch_raw_data.fetch_raw_data
+  fetchData: # fetch the data from internet
+    handler: fetch_data.fetch_data
     layers: 
       - arn:aws:lambda:us-east-1:531868584498:layer:requestsLayer-p36-p37-p38:1
     timeout: 200
