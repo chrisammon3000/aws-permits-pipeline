@@ -3,7 +3,7 @@ Description: "Deploys RDS EventSubscription/SNS/SMS Alerts"
 Parameters:
   DBAlertPhoneNumber:
     Type: String
-    Default: "{{resolve:ssm:/permits/alert_phone:1}}"
+    Default: '{{resolve:ssm:/permits/alert_phone:1}}'
 Resources:
   PermitsDBSNSTopic:
     Type: AWS::SNS::Topic
@@ -12,7 +12,7 @@ Resources:
         - Endpoint: !Ref DBAlertPhoneNumber
           Protocol: sms
       TopicName: "permitsRDSAlertTopic"
-  MyEventSubscription:
+  PermitsDBEventSubscription:
     Type: AWS::RDS::EventSubscription
     Properties:
       Enabled: true
@@ -24,5 +24,12 @@ Resources:
         - failover
         - failure
         - recovery
+        - notification
+        - maintenance
+        - backup
       SnsTopicArn: !Ref PermitsDBSNSTopic
       SourceType: db-instance
+Outputs:
+  permitsDBTopicARN:
+    Description: "ARN of permitsDB subscription"
+    Value: !Ref PermitsDBSNSTopic

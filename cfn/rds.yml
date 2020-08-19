@@ -3,7 +3,7 @@ Description: "Deploys a single PostgreSQL RDS instance."
 Parameters:
   DBInstanceIdentifier:
     Type: String
-    Default: "serverless-permits-rds-instance"
+    Default: "serverless-permits-rds-instance-2"
   DBEngine:
     Type: String
     Default: "postgres"
@@ -52,3 +52,6 @@ Outputs:
   PortDB:
     Description: "Port of the newly created RDS instance"
     Value: !GetAtt PermitsDB.Endpoint.Port
+  DBInstanceIdentifier:
+    Description: "DBInstanceIdentifier"
+    Value: !Ref DBInstanceIdentifier
