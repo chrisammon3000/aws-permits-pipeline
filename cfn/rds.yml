@@ -1,9 +1,12 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: "Deploys a single PostgreSQL RDS instance."
 Parameters:
+  AppName:
+    Type: String
+    Default: "building-permits-aws-pipeline"
   DBInstanceIdentifier:
     Type: String
-    Default: "serverless-permits-rds-instance-4"
+    Default: "permits-rds-instance-3"
   DBEngine:
     Type: String
     Default: "postgres"
@@ -21,14 +24,20 @@ Parameters:
     Default: 20
   DBName:
     Type: String
-    Default: permitsDB
+    Default: '{{resolve:ssm:/permits/db_name:1}}'
   DBUser:
     Type: String
-    Default: postgres
+    Default: '{{resolve:ssm:/permits/db_user:1}}'
   DBPassword:
     Type: String
-    Default: postgres5ecret
+    Default: '{{resolve:ssm-secure:/permits/db_password:1}}'
     NoEcho: True
+  DBAlertPhoneNumber:
+    Type: String
+    Default: '{{resolve:ssm:/permits/alert_phone:1}}'
+  DBAlertEmail:
+    Type: String
+    Default: '{{resolve:ssm:/permits/alert_email:1}}'
 Resources:
   PermitsDB:
     Type: AWS::RDS::DBInstance
@@ -44,14 +53,41 @@ Resources:
       MasterUserPassword: !Ref DBPassword
       Tags:
         - Key: App
-          Value: "building-permits-aws-pipeline"
+          Value: !Ref AppName
+  BuildingPermitsSNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      Subscription:
+        - Endpoint: !Ref DBAlertPhoneNumber
+          Protocol: sms
+        - Endpoint: !Ref DBAlertEmail
+          Protocol: email
+      TopicName: "BuildingPermitsRDSAlertTopic"
+      Tags:
+        - Key: App
+          Value: !Ref AppName
+  BuildingPermitsEventSubscription:
+    Type: AWS::RDS::EventSubscription
+    Properties:
+      Enabled: true
+      EventCategories:
+        - availability
+        - configuration change
+        - creation
+        - deletion
+        - failover
+        - failure
+        - recovery
+        - notification
+        - maintenance
+        - backup
+      SnsTopicArn: !Ref BuildingPermitsSNSTopic
+      SourceType: db-instance
+      SourceIds: [!Ref DBInstanceIdentifier]
 Outputs:
   EndpointDB:
-    Description: "Endpoint of the newly created RDS instance"
+    Description: "Endpoint of the newly created Permits RDS instance"
     Value: !GetAtt PermitsDB.Endpoint.Address
   PortDB:
-    Description: "Port of the newly created RDS instance"
+    Description: "Port of the newly created Permits RDS instance"
     Value: !GetAtt PermitsDB.Endpoint.Port
-  DBInstanceIdentifier:
-    Description: "DBInstanceIdentifier"
-    Value: !Ref DBInstanceIdentifier

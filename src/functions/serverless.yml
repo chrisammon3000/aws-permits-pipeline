@@ -1,5 +1,5 @@
 org: gclindsey
-app: building-permits-analysis
+app: building-permits-aws-pipeline
 service: serverless-permits-rds-pipeline
 
 custom:
@@ -48,12 +48,12 @@ functions:
     memorySize: 1536
     # events:
     #   - sns: arn:aws:sns:us-east-1:531868584498:permitsRDSAlertTopic
-  initDatabase: # initialize the database from snapshot
-    handler: init_db.init_db
-    layers: 
-      - arn:aws:lambda:us-east-1:898466741470:layer:psycopg2-py37:3
-  loadDatabase:
-    handler: load_db.load_db
-    layers:
-      - arn:aws:lambda:us-east-1:898466741470:layer:psycopg2-py37:3
+  # initDatabase: # initialize the database from snapshot
+  #   handler: init_db.init_db
+  #   layers: 
+  #     - arn:aws:lambda:us-east-1:898466741470:layer:psycopg2-py37:3
+  # loadDatabase:
+  #   handler: load_db.load_db
+  #   layers:
+  #     - arn:aws:lambda:us-east-1:898466741470:layer:psycopg2-py37:3
 
