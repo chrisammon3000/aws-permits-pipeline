@@ -3,7 +3,7 @@ Description: "Deploys a single PostgreSQL RDS instance."
 Parameters:
   DBInstanceIdentifier:
     Type: String
-    Default: "serverless-permits-rds-instance-2"
+    Default: "serverless-permits-rds-instance-4"
   DBEngine:
     Type: String
     Default: "postgres"

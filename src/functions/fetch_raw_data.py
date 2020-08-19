@@ -32,13 +32,9 @@ def fetch_raw_data(event, context):
         logger.info(f'File "{file_path}" uploaded as S3 object: "{S3_RAW_FOLDER + file}"')
     except Exception as e:
         logger.info(f"Error uploading to S3: {e}")
-        return {
-            "message": f"Error uploading to S3: {e}"
-        }
+        return -1
         
-    return {
-        "message": "SUCCESS"
-    }
+    return 0
 
 
 def download_csv(url, file_path):
@@ -49,6 +45,7 @@ def download_csv(url, file_path):
         response = requests.get(url)
     except Exception as e:
         logger.info(f'Error retrieving url: {e}')
+        return -1
     
     # Fetch CSV
     try:
@@ -57,5 +54,6 @@ def download_csv(url, file_path):
             logger.info(f'File created: "{file_path}"')
     except Exception as e:
         logger.info(f"Error writing CSV: {e}")
+        return -1
 
-    return
+    return 0
