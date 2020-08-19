@@ -1,6 +1,6 @@
-# CREATE TABLES
+# CREATE TABLES, "peritsDB", postgres
 permits_raw_table_create = ("""
-    GRANT ALL PRIVILEGES ON DATABASE "permitsDB" TO postgres;
+    GRANT ALL PRIVILEGES ON DATABASE "{DB_NAME}" TO {DB_USER};
     DROP TABLE IF EXISTS permits_raw;
     CREATE TABLE permits_raw (
         "Assessor Book" TEXT,

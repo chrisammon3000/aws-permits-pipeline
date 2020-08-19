@@ -1,12 +1,12 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: "Deploys a single PostgreSQL RDS instance."
+Description: "Deploys a single PostgreSQL RDS instance, SNS Topic and SNS Subscription."
 Parameters:
   AppName:
     Type: String
     Default: "building-permits-aws-pipeline"
   DBInstanceIdentifier:
     Type: String
-    Default: "permits-rds-instance-3"
+    Default: "permits-rds-instance-7"
   DBEngine:
     Type: String
     Default: "postgres"
@@ -83,7 +83,8 @@ Resources:
         - backup
       SnsTopicArn: !Ref BuildingPermitsSNSTopic
       SourceType: db-instance
-      SourceIds: [!Ref DBInstanceIdentifier]
+      SourceIds: 
+        - !Ref DBInstanceIdentifier
 Outputs:
   EndpointDB:
     Description: "Endpoint of the newly created Permits RDS instance"
