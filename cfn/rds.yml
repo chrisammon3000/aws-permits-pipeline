@@ -6,7 +6,7 @@ Parameters:
     Default: "building-permits-aws-pipeline"
   DBInstanceIdentifier:
     Type: String
-    Default: "permits-rds-instance-7"
+    Default: "permits-rds-instance-8"
   DBEngine:
     Type: String
     Default: "postgres"
@@ -51,40 +51,41 @@ Resources:
       EngineVersion: !Ref DBEngineVersion
       MasterUsername: !Ref DBUser
       MasterUserPassword: !Ref DBPassword
+      PubliclyAccessible: true
       Tags:
         - Key: App
           Value: !Ref AppName
-  BuildingPermitsSNSTopic:
-    Type: AWS::SNS::Topic
-    Properties:
-      Subscription:
-        - Endpoint: !Ref DBAlertPhoneNumber
-          Protocol: sms
-        - Endpoint: !Ref DBAlertEmail
-          Protocol: email
-      TopicName: "BuildingPermitsRDSAlertTopic"
-      Tags:
-        - Key: App
-          Value: !Ref AppName
-  BuildingPermitsEventSubscription:
-    Type: AWS::RDS::EventSubscription
-    Properties:
-      Enabled: true
-      EventCategories:
-        - availability
-        - configuration change
-        - creation
-        - deletion
-        - failover
-        - failure
-        - recovery
-        - notification
-        - maintenance
-        - backup
-      SnsTopicArn: !Ref BuildingPermitsSNSTopic
-      SourceType: db-instance
-      SourceIds: 
-        - !Ref DBInstanceIdentifier
+  # BuildingPermitsSNSTopic:
+  #   Type: AWS::SNS::Topic
+  #   Properties:
+  #     Subscription:
+  #       - Endpoint: !Ref DBAlertPhoneNumber
+  #         Protocol: sms
+  #       - Endpoint: !Ref DBAlertEmail
+  #         Protocol: email
+  #     TopicName: "BuildingPermitsRDSAlertTopic"
+  #     Tags:
+  #       - Key: App
+  #         Value: !Ref AppName
+  # BuildingPermitsEventSubscription:
+  #   Type: AWS::RDS::EventSubscription
+  #   Properties:
+  #     Enabled: true
+  #     EventCategories:
+  #       - availability
+  #       - configuration change
+  #       - creation
+  #       - deletion
+  #       - failover
+  #       - failure
+  #       - recovery
+  #       - notification
+  #       - maintenance
+  #       - backup
+  #     SnsTopicArn: !Ref BuildingPermitsSNSTopic
+  #     SourceType: db-instance
+  #     SourceIds: 
+  #       - !Ref DBInstanceIdentifier
 Outputs:
   EndpointDB:
     Description: "Endpoint of the newly created Permits RDS instance"
