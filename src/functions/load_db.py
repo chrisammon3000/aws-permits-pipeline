@@ -2,7 +2,7 @@ import os
 import logging
 import json
 import psycopg2
-from libs.sql_queries import permits_raw_table_create
+from libs.sql_queries import copy_raw_permits
 
 DB_ENDPOINT = os.environ['DB_ENDPOINT']
 DB_NAME = os.environ['DB_NAME']
@@ -13,9 +13,12 @@ DB_PORT = os.environ['DB_PORT']
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-def init_db(event, context):
+def load_db(event, context):
 
     logger.info(event)
+    
+    file = event['Records'][0]['s3']['object']['key']
+    logger.info(file)
 
     try:
         logger.info("Attempting connection...")
@@ -30,7 +33,8 @@ def init_db(event, context):
 
     try:
         logger.info("Executing query...")
-        cur.execute(permits_raw_table_create.format(DB_NAME=DB_NAME,DB_USER=DB_USER))
+        cur.execute(copy_raw_permits.format(FILE=file))
+        logger.info(copy_raw_permits.format(FILE=file))
         conn.commit()
         logger.info('Query successful')
         cur.close()
@@ -41,22 +45,8 @@ def init_db(event, context):
         logger.info(f'Closed connection to "{DB_NAME}" at "{DB_ENDPOINT}')
         return -1
 
-    # msg = json.loads(event["Records"][0]["Sns"]["Message"])
-    # topic = event["Records"][0]["Sns"]["TopicArn"]
-    # subject = event["Records"][0]["Sns"]["Subject"]
-    
-    # print(type(msg))
-
-    # for item in [msg, topic, subject]:
-    #     logger.info(item)
-    
-    # if msg["Event Message"] in ['DB instance created']:
-    #     print("Fetch data!!!")
-
-    #print("INIT QUERY:\n", permits_raw_table_create)
-
     return 0
 
 
 if __name__ == "__main__":
-    init_db("", "")
+    load_db("", "")

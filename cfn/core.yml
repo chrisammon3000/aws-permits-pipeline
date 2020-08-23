@@ -26,7 +26,7 @@ Parameters:
     Default: "postgres"
   DBEngineVersion:
     Type: String
-    Default: "11.4"
+    Default: "11.6"
   DBInstanceClass:
     Type: String
     Default: "db.t2.micro"

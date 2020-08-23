@@ -2,7 +2,15 @@
 # app: building-permits-aws-pipeline
 service: serverless-permits-rds-pipeline
 
+plugins:
+  - serverless-python-requirements
+
+package:
+  individually: true
+
 custom:
+  pythonRequirements:
+    dockerizePip: non-linux
   bucket: aws-permits-analysis
   s3_raw_folder: "data/raw/"
   s3_int_folder: "data/interim/"
@@ -14,7 +22,7 @@ custom:
   db_user: ${ssm:/permits/db_user}
   #db_password: ${ssm:/permits/db_password~true}
   db_port: 5432
-  db_endpoint: "permits-rds-instance-9-vpc.cyfbs6snj6hh.us-east-1.rds.amazonaws.com"
+  db_endpoint: "permits-rds-instance-postgis-template-1.cyfbs6snj6hh.us-east-1.rds.amazonaws.com"
   
 provider:
   name: aws
@@ -27,10 +35,13 @@ provider:
         - s3:PutObject
         - s3:PutObjectAcl
         - s3:PutBucketNotification
+        - s3:GetObject
+        - s3:ListBucket
+        - s3:GetObjectAcl
       Resource: arn:aws:s3:::${self:custom.bucket}/*
 
 functions:
-  fetchData: # fetch the data from internet
+  fetchData:
     handler: fetch_data.fetch_data
     layers: 
       - arn:aws:lambda:us-east-1:531868584498:layer:requestsLayer-p36-p37-p38:1
@@ -47,6 +58,9 @@ functions:
     #   - sns: arn:aws:sns:us-east-1:531868584498:permitsRDSAlertTopic
   initDatabase: # initialize the database from snapshot
     handler: init_db.init_db
+    package:
+      include:
+          - libs/sql_queries.py
     layers: 
       - arn:aws:lambda:us-east-1:898466741470:layer:psycopg2-py37:3
     timeout: 30
@@ -57,8 +71,19 @@ functions:
       DB_PASSWORD: ${ssm:/permits/db_password~true}
       DB_PORT: ${self:custom.db_port}
       DB_ENDPOINT: ${self:custom.db_endpoint}
-  # loadDatabase:
-  #   handler: load_db.load_db
-  #   layers:
-  #     - arn:aws:lambda:us-east-1:898466741470:layer:psycopg2-py37:3
+  loadDatabase:
+    handler: load_db.load_db
+    package:
+      include:
+          - libs/sql_queries.py
+    layers:
+      - arn:aws:lambda:us-east-1:898466741470:layer:psycopg2-py37:3
+    timeout: 120
+    memorySize: 128
+    environment:
+      DB_NAME: ${self:custom.db_name}
+      DB_USER: ${self:custom.db_user}
+      DB_PASSWORD: ${ssm:/permits/db_password~true}
+      DB_PORT: ${self:custom.db_port}
+      DB_ENDPOINT: ${self:custom.db_endpoint}
 

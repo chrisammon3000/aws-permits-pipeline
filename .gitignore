@@ -121,3 +121,6 @@ scripts/
 .shred
 notebooks/
 data/
+package-lock.json
+node_modules/
+*.pem

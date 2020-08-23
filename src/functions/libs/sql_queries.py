@@ -1,3 +1,41 @@
+# INSTALL EXTENSIONS
+install_ext_aws_s3 = "CREATE EXTENSION aws_s3 CASCADE;"
+
+# Don't forget to set up IAM permissions in CLI
+
+install_ext_postgis = ("""
+    SELECT current_user;
+    CREATE EXTENSION postgis;
+    CREATE EXTENSION fuzzystrmatch;
+    CREATE EXTENSION postgis_tiger_geocoder;
+    CREATE EXTENSION postgis_topology;
+    ALTER SCHEMA tiger owner TO rds_superuser;
+    ALTER SCHEMA tiger_data owner TO rds_superuser;
+    ALTER SCHEMA topology owner TO rds_superuser;
+    CREATE FUNCTION exec(text) RETURNS text 
+        LANGUAGE plpgsql volatile 
+        AS $f$ 
+    BEGIN 
+        EXECUTE $1; 
+        RETURN $1; 
+    END; $f$;
+    SELECT exec('ALTER TABLE ' || quote_ident(s.nspname) || '.' || quote_ident(s.relname) || ' OWNER TO rds_superuser;')
+    FROM (
+        SELECT nspname, relname
+        FROM pg_class c JOIN pg_namespace n ON (c.relnamespace = n.oid) 
+        WHERE nspname in ('tiger','topology') AND
+        relkind IN ('r','S','v') ORDER BY relkind = 'S')
+    s;
+    SET search_path=public,tiger;
+""")
+
+test_postgis_tiger_query = ("""
+    select na.address, na.streetname, na.streettypeabbrev, na.zip
+    from normalize_address('1 Devonshire Place, Boston, MA 02109') as na;
+""")
+
+test_postgis_tiger_output = "1 Devonshire Pl 02109"
+
 # CREATE TABLES, "peritsDB", postgres
 permits_raw_table_create = ("""
     GRANT ALL PRIVILEGES ON DATABASE "{DB_NAME}" TO {DB_USER};
@@ -66,52 +104,13 @@ permits_raw_table_create = ("""
     SET statement_timeout = '30s';
 """)
 
-# INSTALL EXTENSIONS
-install_ext_aws_s3 = "CREATE EXTENSION aws_s3 CASCADE;"
-
-# Don't forget IAM permissions
-
-install_ext_postgis = ("""
-    SELECT current_user;
-    CREATE EXTENSION postgis;
-    CREATE EXTENSION fuzzystrmatch;
-    CREATE EXTENSION postgis_tiger_geocoder;
-    CREATE EXTENSION postgis_topology;
-    ALTER SCHEMA tiger owner TO rds_superuser;
-    ALTER SCHEMA tiger_data owner TO rds_superuser;
-    ALTER SCHEMA topology owner TO rds_superuser;
-    CREATE FUNCTION exec(text) RETURNS text 
-        LANGUAGE plpgsql volatile 
-        AS $f$ 
-    BEGIN 
-        EXECUTE $1; 
-        RETURN $1; 
-    END; $f$;
-    SELECT exec('ALTER TABLE ' || quote_ident(s.nspname) || '.' || quote_ident(s.relname) || ' OWNER TO rds_superuser;')
-    FROM (
-        SELECT nspname, relname
-        FROM pg_class c JOIN pg_namespace n ON (c.relnamespace = n.oid) 
-        WHERE nspname in ('tiger','topology') AND
-        relkind IN ('r','S','v') ORDER BY relkind = 'S')
-    s;
-    SET search_path=public,tiger;
-""")
-
-test_postgis_tiger_query = ("""
-    select na.address, na.streetname, na.streettypeabbrev, na.zip
-    from normalize_address('1 Devonshire Place, Boston, MA 02109') as na;
-""")
-
-test_postgis_tiger_output = "1 Devonshire Pl 02109"
-
-
 # COPY DATA
 copy_raw_permits = ("""
     SELECT aws_s3.table_import_from_s3(
     'permits_raw',
     '',
     '(FORMAT CSV)', 
-    aws_commons.create_s3_uri('aws-permits-analysis', '{}', 'us-east-1')
+    aws_commons.create_s3_uri('aws-permits-analysis', '{FILE}', 'us-east-1')
     );
 """)
 

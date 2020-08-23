@@ -6,13 +6,13 @@ Parameters:
     Default: "building-permits-aws-pipeline"
   DBInstanceIdentifier:
     Type: String
-    Default: "permits-rds-instance-8"
+    Default: "permits-rds-instance-postgis-template-1"
   DBEngine:
     Type: String
     Default: "postgres"
   DBEngineVersion:
     Type: String
-    Default: "11.4"
+    Default: "11.6"
   DBInstanceClass:
     Type: String
     Default: "db.t2.micro"
@@ -32,12 +32,12 @@ Parameters:
     Type: String
     Default: '{{resolve:ssm-secure:/permits/db_password:1}}'
     NoEcho: True
-  DBAlertPhoneNumber:
-    Type: String
-    Default: '{{resolve:ssm:/permits/alert_phone:1}}'
-  DBAlertEmail:
-    Type: String
-    Default: '{{resolve:ssm:/permits/alert_email:1}}'
+  # DBAlertPhoneNumber:
+  #   Type: String
+  #   Default: '{{resolve:ssm:/permits/alert_phone:1}}'
+  # DBAlertEmail:
+  #   Type: String
+  #   Default: '{{resolve:ssm:/permits/alert_email:1}}'
 Resources:
   PermitsDB:
     Type: AWS::RDS::DBInstance
