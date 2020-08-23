@@ -129,3 +129,7 @@ node_modules/
 # Scripts
 load_tiger.sh
 install_layer_libs.sh
+
+# cfn
+cfn/events.yml
+cfn/core.yml

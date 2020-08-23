@@ -54,9 +54,11 @@ functions:
       S3_PROCESSED_FOLDER: ${self:custom.s3_processed_folder}
       PERMITS_URL: ${self:custom.permits_url}
       FILENAME: ${self:custom.filename}
-    # events:
-    #   - sns: arn:aws:sns:us-east-1:531868584498:permitsRDSAlertTopic
-  initDatabase: # initialize the database from snapshot
+    events:
+      - http:
+          path: ping
+          method: get
+  initDatabase:
     handler: init_db.init_db
     package:
       include:
