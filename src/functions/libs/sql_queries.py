@@ -36,7 +36,16 @@ test_postgis_tiger_query = ("""
 
 test_postgis_tiger_output = "1 Devonshire Pl 02109"
 
-# CREATE TABLES, "peritsDB", postgres
+# CREATE TABLES, "permitsDB", postgres
+titanic_create_table = ("""
+    GRANT ALL PRIVILEGES ON DATABASE "{DB_NAME}" TO {DB_USER};
+    DROP TABLE IF EXISTS titanic_data;
+    CREATE TABLE titanic_data (
+        
+    );
+    SET statement_timeout = '30s';
+""")
+
 permits_raw_table_create = ("""
     GRANT ALL PRIVILEGES ON DATABASE "{DB_NAME}" TO {DB_USER};
     DROP TABLE IF EXISTS permits_raw;

@@ -1,3 +1,10 @@
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
+
 building-permits-aws-pipeline
 ==============================
 
@@ -24,9 +31,38 @@ The pipeline is built on these frameworks and platforms:
 * [psycopg2](https://pypi.org/project/psycopg2/)
 
 ## Getting Started
-*Under development*<br>
 
-1. Edit the file `scripts/set_parameters.sh` to set the parameters for the database name, username and password. *(optional)*
+Clone this repo:
+```
+git clone \
+    --branch master --single-branch --depth 1 --no-tags \
+    https://github.com/abk7777/building-permits-aws-pipeline.git
+```
+
+### Prerequisites
+* [awscli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+* [Credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) for AWS CLI
+* [Serverless](https://www.serverless.com/framework/docs/getting-started/) framework
+
+### Setting up Environment
+1. Install and configure awscli. Anaconda users can run:
+   ```
+   conda install -c conda-forge awscli
+   ```
+
+2. Install Serverless framework (using npm):
+   ```
+   npm install -g serverless
+   ```
+     You will see an output with the API endpoint something like:
+     ```
+     endpoints:
+       GET - https://XXXXXXXXX.execute-api.us-east-1.amazonaws.com/dev/init
+       GET - https://XXXXXXXXX.execute-api.us-east-1.amazonaws.com/dev/start
+     ```
+     These are used to initialize the database and start the pipeline once the RDS instance is running.
+
+1. *(optional)* Edit the file `scripts/set_parameters.sh` to set the parameters for the database name, username and password.
 2. Run the script:
    ```
    bash scripts/set_parameters.sh
@@ -40,50 +76,39 @@ The pipeline is built on these frameworks and platforms:
    cd src/functions
    serverless deploy
    ```
-5. Once the RDS instance is up and running, ping API Gateway to start the pipeline:
+5. Once the RDS instance is up and running, ping API Gateway to initialize and run the pipeline:
    ```
-   curl https://XXXXXXX.execute-api.us-east-1.amazonaws.com/dev/start
+   curl https://XXXXXXX.execute-api.us-east-1.amazonaws.com/dev/init
    ```
-
-
-
-### Prerequisites
-*Under development*
-
-### Setting up Environment
-
 
 ### Running the Pipeline
-
-  Option 1: Run the entire pipeline start to finish using GNU Make:
-  ```
-  make data
-  ``` 
-
-  Option 2: Load the raw data using GNU Make and run the rest of the pipeline from Jupyter Notebook:
-  ```
-  make load_db \
-  && cd notebooks \
-  && jupyter notebook ## Select 0.1-pipeline notebook
-  ```
+   Ping API Gateway endpoint to run the pipeline again:
+   ```
+   curl https://XXXXXXX.execute-api.us-east-1.amazonaws.com/dev/run
+   ```
 
 ### Accessing the database
-The PostgreSQL database within the Docker container can be accessed by running:
-```
-docker exec -it postgres_db psql -U postgres -d permits
-```
-It is useful to check that new columns were correctly populated by running a query such as:
-```
-SELECT full_address, latitude, longitude FROM permits_raw LIMIT 10;
-```
+   Open the notebook `0.1-building-permits-aws-pipeline` to run queries on the database:
+   ```
+   cd notebooks
+   jupyter notebook
+   ```
 
 ### Cleaning up
-A single command will delete the database as well as the Docker container and any cache files:
-```
-make tear_down
-```
-
-
+*Under development*
 ## Contributors
 
 **Primary (Contact) : [Gregory Lindsey](https://github.com/gclindsey)**
+
+[contributors-shield]: https://img.shields.io/github/contributors/abk7777/building-permits-aws-pipeline.svg?style=flat-square
+[contributors-url]: https://github.com/abk7777/building-permits-aws-pipeline/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/abk7777/building-permits-aws-pipeline.svg?style=flat-square
+[forks-url]: https://github.com/abk7777/building-permits-aws-pipeline/network/members
+[stars-shield]: https://img.shields.io/github/stars/abk7777/building-permits-aws-pipeline.svg?style=flat-square
+[stars-url]: https://github.com/abk7777/building-permits-aws-pipeline/stargazers
+[issues-shield]: https://img.shields.io/github/issues/abk7777/building-permits-aws-pipeline.svg?style=flat-square
+[issues-url]: https://github.com/abk7777/building-permits-aws-pipeline/issues
+[license-shield]: https://img.shields.io/github/license/abk7777/building-permits-aws-pipeline.svg?style=flat-square
+[license-url]: https://github.com/abk7777/building-permits-aws-pipeline/blob/master/LICENSE
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
+[linkedin-url]: https://linkedin.com/in/gregory-lindsey/

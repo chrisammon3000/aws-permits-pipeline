@@ -1,6 +1,4 @@
-# org: gclindsey
-# app: building-permits-aws-pipeline
-service: serverless-permits-rds-pipeline
+service: building-permits-aws-pipeline
 
 plugins:
   - serverless-python-requirements
@@ -15,14 +13,14 @@ custom:
   s3_raw_folder: "data/raw/"
   s3_int_folder: "data/interim/"
   s3_processed_folder: "data/processed/"
-  permits_url: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
-  #permits_url: "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj"
-  filename: "permits"
+  #permits_url: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
+  permits_url: "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj"
+  filename: "titanic"
   db_name: ${ssm:/permits/db_name}
   db_user: ${ssm:/permits/db_user}
   db_password: ${ssm:/permits/db_password~true}
-  db_port: 5432
-  db_endpoint: "permits-rds-instance-postgis-template-1.cyfbs6snj6hh.us-east-1.rds.amazonaws.com"
+  db_port: ${cf:building-permits-aws-pipeline.PortDB}
+  db_endpoint: ${cf:building-permits-aws-pipeline.EndpointDB}
   
 provider:
   name: aws
@@ -58,7 +56,7 @@ functions:
       DB_ENDPOINT: ${self:custom.db_endpoint}
     events:
       - http:
-          path: start
+          path: init
           method: get
   fetchData:
     handler: fetch_data.fetch_data
@@ -73,6 +71,11 @@ functions:
       S3_PROCESSED_FOLDER: ${self:custom.s3_processed_folder}
       PERMITS_URL: ${self:custom.permits_url}
       FILENAME: ${self:custom.filename}
+    events:
+      - schedule: rate(1 day)
+      - http:
+          path: start
+          method: get
   loadDatabase:
     handler: load_db.load_db
     package:
