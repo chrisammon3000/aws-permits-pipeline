@@ -1,12 +1,12 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: "Deploys a single PostgreSQL RDS instance, SNS Topic and SNS Subscription."
+Description: "Deploys a single PostgreSQL RDS instance."
 Parameters:
   AppName:
     Type: String
     Default: "building-permits-aws-pipeline"
   DBInstanceIdentifier:
     Type: String
-    Default: "permits-rds-instance-postgis-template-1"
+    Default: "permits-dev-1"
   DBEngine:
     Type: String
     Default: "postgres"

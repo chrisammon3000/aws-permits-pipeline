@@ -20,7 +20,7 @@ custom:
   filename: "permits"
   db_name: ${ssm:/permits/db_name}
   db_user: ${ssm:/permits/db_user}
-  #db_password: ${ssm:/permits/db_password~true}
+  db_password: ${ssm:/permits/db_password~true}
   db_port: 5432
   db_endpoint: "permits-rds-instance-postgis-template-1.cyfbs6snj6hh.us-east-1.rds.amazonaws.com"
   
@@ -41,6 +41,21 @@ provider:
       Resource: arn:aws:s3:::${self:custom.bucket}/*
 
 functions:
+  initDatabase:
+    handler: init_db.init_db
+    package:
+      include:
+          - libs/sql_queries.py
+    layers: 
+      - arn:aws:lambda:us-east-1:898466741470:layer:psycopg2-py37:3
+    timeout: 30
+    memorySize: 128
+    environment:
+      DB_NAME: ${self:custom.db_name}
+      DB_USER: ${self:custom.db_user}
+      DB_PASSWORD: ${self:custom.db_password}
+      DB_PORT: ${self:custom.db_port}
+      DB_ENDPOINT: ${self:custom.db_endpoint}
   fetchData:
     handler: fetch_data.fetch_data
     layers: 
@@ -58,21 +73,6 @@ functions:
       - http:
           path: ping
           method: get
-  initDatabase:
-    handler: init_db.init_db
-    package:
-      include:
-          - libs/sql_queries.py
-    layers: 
-      - arn:aws:lambda:us-east-1:898466741470:layer:psycopg2-py37:3
-    timeout: 30
-    memorySize: 128
-    environment:
-      DB_NAME: ${self:custom.db_name}
-      DB_USER: ${self:custom.db_user}
-      DB_PASSWORD: ${ssm:/permits/db_password~true}
-      DB_PORT: ${self:custom.db_port}
-      DB_ENDPOINT: ${self:custom.db_endpoint}
   loadDatabase:
     handler: load_db.load_db
     package:
@@ -85,7 +85,7 @@ functions:
     environment:
       DB_NAME: ${self:custom.db_name}
       DB_USER: ${self:custom.db_user}
-      DB_PASSWORD: ${ssm:/permits/db_password~true}
+      DB_PASSWORD: ${self:custom.db_password}
       DB_PORT: ${self:custom.db_port}
       DB_ENDPOINT: ${self:custom.db_endpoint}
 
