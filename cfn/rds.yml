@@ -32,12 +32,6 @@ Parameters:
     Type: String
     Default: '{{resolve:ssm-secure:/permits/db_password:1}}'
     NoEcho: True
-  # DBAlertPhoneNumber:
-  #   Type: String
-  #   Default: '{{resolve:ssm:/permits/alert_phone:1}}'
-  # DBAlertEmail:
-  #   Type: String
-  #   Default: '{{resolve:ssm:/permits/alert_email:1}}'
 Resources:
   PermitsDB:
     Type: AWS::RDS::DBInstance
@@ -55,37 +49,6 @@ Resources:
       Tags:
         - Key: App
           Value: !Ref AppName
-  # BuildingPermitsSNSTopic:
-  #   Type: AWS::SNS::Topic
-  #   Properties:
-  #     Subscription:
-  #       - Endpoint: !Ref DBAlertPhoneNumber
-  #         Protocol: sms
-  #       - Endpoint: !Ref DBAlertEmail
-  #         Protocol: email
-  #     TopicName: "BuildingPermitsRDSAlertTopic"
-  #     Tags:
-  #       - Key: App
-  #         Value: !Ref AppName
-  # BuildingPermitsEventSubscription:
-  #   Type: AWS::RDS::EventSubscription
-  #   Properties:
-  #     Enabled: true
-  #     EventCategories:
-  #       - availability
-  #       - configuration change
-  #       - creation
-  #       - deletion
-  #       - failover
-  #       - failure
-  #       - recovery
-  #       - notification
-  #       - maintenance
-  #       - backup
-  #     SnsTopicArn: !Ref BuildingPermitsSNSTopic
-  #     SourceType: db-instance
-  #     SourceIds: 
-  #       - !Ref DBInstanceIdentifier
 Outputs:
   EndpointDB:
     Description: "Endpoint of the newly created Permits RDS instance"
