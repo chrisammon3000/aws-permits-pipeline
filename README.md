@@ -26,9 +26,10 @@ The pipeline is built on these frameworks and platforms:
 * S3
 * RDS (PostgreSQL with PostGIS extension)
 * AWS Parameter Store
-* US Census Bureau [TIGER](https://en.wikipedia.org/wiki/Topologically_Integrated_Geographic_Encoding_and_Referencing) data for geocoding
+* Serverless framework
 * Python
 * [psycopg2](https://pypi.org/project/psycopg2/)
+* US Census Bureau [TIGER](https://en.wikipedia.org/wiki/Topologically_Integrated_Geographic_Encoding_and_Referencing) data for geocoding
 
 ## Getting Started
 
@@ -54,7 +55,7 @@ git clone \
    ```
    npm install -g serverless
    ```
-     You will see an output with the API endpoint something like:
+     You will see an output with the API endpoints something like:
      ```
      endpoints:
        GET - https://XXXXXXXXX.execute-api.us-east-1.amazonaws.com/dev/init
@@ -80,9 +81,10 @@ git clone \
    ```
    curl https://XXXXXXX.execute-api.us-east-1.amazonaws.com/dev/init
    ```
+    This will also run the pipeline for the first time.
 
 ### Running the Pipeline
-   Ping API Gateway endpoint to run the pipeline again:
+   Ping API Gateway endpoint to run the pipeline again and fetch the most recent data:
    ```
    curl https://XXXXXXX.execute-api.us-east-1.amazonaws.com/dev/run
    ```
