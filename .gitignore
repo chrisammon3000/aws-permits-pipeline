@@ -117,10 +117,13 @@ src/layers/
 venv/
 src/functions/ingest/events/
 layers/
-scripts/
 .shred
 notebooks/
 data/
 package-lock.json
 node_modules/
 *.pem
+
+# Scripts
+load_tiger.sh
+install_layer_libs.sh
