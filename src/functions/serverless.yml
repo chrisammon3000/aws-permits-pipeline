@@ -56,6 +56,10 @@ functions:
       DB_PASSWORD: ${self:custom.db_password}
       DB_PORT: ${self:custom.db_port}
       DB_ENDPOINT: ${self:custom.db_endpoint}
+    events:
+      - http:
+          path: start
+          method: get
   fetchData:
     handler: fetch_data.fetch_data
     layers: 
@@ -69,10 +73,6 @@ functions:
       S3_PROCESSED_FOLDER: ${self:custom.s3_processed_folder}
       PERMITS_URL: ${self:custom.permits_url}
       FILENAME: ${self:custom.filename}
-    events:
-      - http:
-          path: ping
-          method: get
   loadDatabase:
     handler: load_db.load_db
     package:

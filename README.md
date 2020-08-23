@@ -18,12 +18,34 @@ The pipeline is built on these frameworks and platforms:
 * Lambda
 * S3
 * RDS (PostgreSQL with PostGIS extension)
+* AWS Parameter Store
 * US Census Bureau [TIGER](https://en.wikipedia.org/wiki/Topologically_Integrated_Geographic_Encoding_and_Referencing) data for geocoding
 * Python
 * [psycopg2](https://pypi.org/project/psycopg2/)
 
 ## Getting Started
-*Under development*
+*Under development*<br>
+
+1. Edit the file `scripts/set_parameters.sh` to set the parameters for the database name, username and password. *(optional)*
+2. Run the script:
+   ```
+   bash scripts/set_parameters.sh
+   ```
+3. Deploy the RDS stack:
+   ```
+   aws cloudformation deploy --template-file cfn/rds.yml --stack-name building-permits-aws-pipeline --capabilities CAPABILITY_IAM
+   ```
+4. Deploy Serverless stack:
+   ```
+   cd src/functions
+   serverless deploy
+   ```
+5. Once the RDS instance is up and running, ping API Gateway to start the pipeline:
+   ```
+   curl https://XXXXXXX.execute-api.us-east-1.amazonaws.com/dev/start
+   ```
+
+
 
 ### Prerequisites
 *Under development*
