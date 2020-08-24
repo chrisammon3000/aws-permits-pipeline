@@ -11,7 +11,7 @@ DB_PASSWORD = os.environ['DB_PASSWORD']
 DB_PORT = os.environ['DB_PORT']
 
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 def load_data(event, context):
 
@@ -38,7 +38,6 @@ def load_data(event, context):
         # permits data
         cur.execute(permits_raw_copy.format(FILE=file))
         logger.info(f'Query successful')
-        logger.debug(permits_raw_copy.format(FILE=file))
 
         # # titanic data for testing
         # cur.execute(titanic_data_copy.format(FILE=file))
@@ -49,7 +48,7 @@ def load_data(event, context):
         cur.close()
         logger.info(f'Closed connection to "{DB_NAME}" at "{DB_ENDPOINT}')
     except Exception as err:
-        logger.error(f'Error: "{err}"')
+        logger.error(f'Unsuccessful query, Error: "{err}"')
         cur.close()
         logger.info(f'Closed connection to "{DB_NAME}" at "{DB_ENDPOINT}')
         return -1
@@ -58,4 +57,4 @@ def load_data(event, context):
 
 
 if __name__ == "__main__":
-    load_db("", "")
+    load_data("", "")
