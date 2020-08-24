@@ -2,7 +2,7 @@ import os
 import logging
 import json
 import psycopg2
-from libs.sql_queries import permits_raw_copy, titanic_data_copy
+from libs.sql_queries import permits_raw_copy #, titanic_data_copy
 
 DB_ENDPOINT = os.environ['DB_ENDPOINT']
 DB_NAME = os.environ['DB_NAME']
@@ -11,7 +11,7 @@ DB_PASSWORD = os.environ['DB_PASSWORD']
 DB_PORT = os.environ['DB_PORT']
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 def load_data(event, context):
 
@@ -28,19 +28,22 @@ def load_data(event, context):
         cur = conn.cursor()
         logger.info(f'Connected to "{DB_NAME}" at "{DB_ENDPOINT}"')
     except Exception as err:
-        logger.error(f'Error: "{err}"')
+        logger.error(f'Connection Error: "{err}"')
         return -1
-
+        
+    logger.info(f'Executing query: "COPY"')
+    logger.debug(permits_raw_copy.format(FILE=file))
+    # logger.debug(titanic_data_copy.format(FILE=file))
     try:
         # permits data
-        # logger.info(f'Executing query: "{permits_raw_copy.format(FILE=file)}"')
-        # cur.execute(permits_raw_copy.format(FILE=file))
-        # logger.info(f'Query successful: "{permits_raw_copy.format(FILE=file)}"')
+        cur.execute(permits_raw_copy.format(FILE=file))
+        logger.info(f'Query successful')
+        logger.debug(permits_raw_copy.format(FILE=file))
 
-        # titanic data for testing
-        logger.info(f'Executing query: "{titanic_data_copy.format(FILE=file)}"')
-        cur.execute(titanic_data_copy.format(FILE=file))
-        logger.info(f'Query successful: "{titanic_data_copy.format(FILE=file)}"')
+        # # titanic data for testing
+        # cur.execute(titanic_data_copy.format(FILE=file))
+        # logger.info(f'Query successful')
+        # logger.debug(titanic_data_copy.format(FILE=file))
 
         conn.commit()
         cur.close()
