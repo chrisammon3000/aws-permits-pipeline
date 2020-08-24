@@ -51,12 +51,10 @@ git clone \
    conda install -c conda-forge awscli
    aws configure
    ```
-
 2. Install Serverless framework (using npm):
    ```
    npm install -g serverless
    ```
-
 3. *(optional)* Edit the file `scripts/set_parameters.sh` to set the parameters for the database name, username and password.
 4. Run the script:
    ```
@@ -71,9 +69,17 @@ git clone \
    cd src/functions
    serverless deploy
    ```
+7. Initialize database
+   
+   *Under Development*
+
+### Initialize the Database
+
+*Under Development*
 
 ### Running the Pipeline
 
+*Under Development*
 
 ### Accessing the database
    Open the notebook `0.1-building-permits-aws-pipeline` to run queries on the database and explore the data:
