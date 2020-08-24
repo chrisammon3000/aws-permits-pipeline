@@ -44,6 +44,7 @@ git clone \
 * [awscli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
 * [Credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) for AWS CLI
 * [Serverless](https://www.serverless.com/framework/docs/getting-started/) framework
+* Lambda Layers: *Under Development*
 
 ### Setting up Environment
 1. Install and configure awscli. Anaconda users can run:
