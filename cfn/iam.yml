@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: "Deploys a single PostgreSQL RDS instance."
+Resources:
+  RDSS3ImportPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: rds-s3-import-policy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+          - Sid: s3import
+            Action: 
+              - s3:GetObject
+              - s3:ListBucket
+            Effect: Allow
+            Resource: 
+              - arn:aws:s3:::aws-permits-analysis
+              - arn:aws:s3:::aws-permits-analysis/*
+      Roles: 
+        - !Ref RDSS3ImportRole
+  RDSS3ImportRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: 
+              Service:
+                - rds.amazonaws.com
+            Action: sts:AssumeRole
