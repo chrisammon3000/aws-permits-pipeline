@@ -63,7 +63,7 @@ git clone \
    ```
 5. Deploy the RDS stack:
    ```
-   aws cloudformation deploy --template-file cfn/rds.yml --stack-name aws-building-permits-pipeline-cfn --capabilities CAPABILITY_IAM
+   aws cloudformation deploy --template-file cfn/rds.yml --stack-name aws-building-permits-pipeline-cfn --capabilities CAPABILITY_NAMED_IAM
    ```
 6. Deploy Serverless stack:
    ```

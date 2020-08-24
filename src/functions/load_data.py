@@ -32,17 +32,17 @@ def load_data(event, context):
         return -1
         
     logger.info(f'Executing query: "COPY"')
-    logger.debug(permits_raw_copy.format(FILE=file))
-    # logger.debug(titanic_data_copy.format(FILE=file))
+    # logger.debug(permits_raw_copy.format(FILE=file))
+    logger.debug(titanic_data_copy.format(FILE=file))
     try:
         # permits data
-        cur.execute(permits_raw_copy.format(FILE=file))
-        logger.info(f'Query successful')
-
-        # # titanic data for testing
-        # cur.execute(titanic_data_copy.format(FILE=file))
+        # cur.execute(permits_raw_copy.format(FILE=file))
         # logger.info(f'Query successful')
-        # logger.debug(titanic_data_copy.format(FILE=file))
+
+        # titanic data for testing
+        cur.execute(titanic_data_copy.format(FILE=file))
+        logger.info(f'Query successful')
+        logger.debug(titanic_data_copy.format(FILE=file))
 
         conn.commit()
         cur.close()

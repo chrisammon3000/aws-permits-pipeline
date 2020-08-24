@@ -6,7 +6,7 @@ Parameters:
     Default: "aws-building-permits-pipeline"
   DBInstanceIdentifier:
     Type: String
-    Default: "permits-dev-2"
+    Default: "permits-dev-3"
   DBEngine:
     Type: String
     Default: "postgres"
@@ -33,11 +33,42 @@ Parameters:
     Default: '{{resolve:ssm-secure:/permits/db_password:1}}'
     NoEcho: True
 Resources:
+  RDSS3ImportPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: rds-s3-import-policy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+          - Sid: s3import
+            Action: 
+              - s3:GetObject
+              - s3:ListBucket
+            Effect: Allow
+            Resource: 
+              - arn:aws:s3:::aws-permits-analysis
+              - arn:aws:s3:::aws-permits-analysis/*
+      Roles: 
+        - !Ref RDSS3ImportRole
+  RDSS3ImportRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: 
+              Service:
+                - rds.amazonaws.com
+            Action: sts:AssumeRole
   PermitsDB:
     Type: AWS::RDS::DBInstance
     Properties:
       DBInstanceIdentifier: !Ref DBInstanceIdentifier
       DBName: !Ref DBName
+      AssociatedRoles: 
+        - FeatureName: s3Import
+          RoleArn: !GetAtt RDSS3ImportRole.Arn
       AllocatedStorage: !Ref DBAllocatedStorage
       DBInstanceClass: !Ref DBInstanceClass
       StorageType: !Ref DBStorageType
