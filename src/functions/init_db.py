@@ -2,7 +2,7 @@ import os
 import logging
 import json
 import psycopg2
-from libs.sql_queries import permits_init_queries #, titanic_init_queries
+from libs.sql_queries import permits_init_queries, titanic_init_queries
 
 DB_ENDPOINT = os.environ['DB_ENDPOINT']
 DB_NAME = os.environ['DB_NAME']
@@ -33,7 +33,7 @@ def init_db(event, context):
 
         # # permits data
         # # install aws_s3 extension
-        # logger.info(f'Executing query: "aws_s3 extension"')
+        # logger.info(f'Executing query: "install aws_s3 extension"')
         # logger.debug(permits_init_queries[0])
         # try:
         #     cur.execute(permits_init_queries[0])
@@ -42,7 +42,7 @@ def init_db(event, context):
         #     logger.error(f'Unsuccessful query, Error: {err}')
 
         # # install PostGIS extension
-        # logger.info(f'Executing query: PostGIS extension')
+        # logger.info(f'Executing query: "install PostGIS extension"')
         # logger.debug(permits_init_queries[1])
         # try:
         #     cur.execute(permits_init_queries[1])
@@ -51,7 +51,7 @@ def init_db(event, context):
         #     logger.error(f'Unsuccessful query, Error: {err}')
 
         # # create permits_raw table
-        # logger.info(f'Executing query')
+        # logger.info(f'Executing query: "CREATE TABLE permits_raw"')
         # logger.debug(permits_init_queries[2].format(DB_NAME=DB_NAME,DB_USER=DB_USER))
         # try:
         #     cur.execute(permits_init_queries[2].format(DB_NAME=DB_NAME,DB_USER=DB_USER))
@@ -61,20 +61,23 @@ def init_db(event, context):
 
         # titanic data for testing
         # install aws_s3 extension
+        logger.info(f'Executing query: "aws_s3 extension"')
+        logger.debug(titanic_init_queries[0])
         try:
             cur.execute(titanic_init_queries[0])
-            logger.info(f'Query successful: "{titanic_init_queries[0]}"')
+            logger.info('Query successful')
+            
         except Exception as err:
-            logger.info(f'Error: {err}')
-            logger.info(f'Unsuccessful query: "{titanic_init_queries[0]}"')
+            logger.error(f'Unsuccessful query, Error: {err}')
 
         # create titanic_data table
+        logger.info(f'Executing query: "CREATE TABLE titanic_data"')
+        logger.debug(titanic_init_queries[1].format(DB_NAME=DB_NAME,DB_USER=DB_USER))
         try:
             cur.execute(titanic_init_queries[1].format(DB_NAME=DB_NAME,DB_USER=DB_USER))
-            logger.info(f'Query successful: "{titanic_init_queries[1].format(DB_NAME=DB_NAME,DB_USER=DB_USER)}"')
+            logger.info(f'Query successful:)
         except Exception as err:
-            logger.info(f'Error: {err}')
-            logger.info(f'Unsuccessful query: "{titanic_init_queries[1].format(DB_NAME=DB_NAME,DB_USER=DB_USER)}"')
+            logger.error(f'Unsuccessful query, Error: {err}')
 
         conn.commit()
         cur.close()

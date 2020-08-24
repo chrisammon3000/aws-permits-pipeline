@@ -2,7 +2,7 @@ import os
 import logging
 import json
 import psycopg2
-from libs.sql_queries import permits_raw_copy #, titanic_data_copy
+from libs.sql_queries import permits_raw_copy, titanic_data_update
 
 DB_ENDPOINT = os.environ['DB_ENDPOINT']
 DB_NAME = os.environ['DB_NAME']
@@ -33,16 +33,16 @@ def load_data(event, context):
         
     logger.info(f'Executing query: "COPY"')
     # logger.debug(permits_raw_copy.format(FILE=file))
-    logger.debug(titanic_data_copy.format(FILE=file))
+    logger.debug(titanic_data_update.format(FILE=file))
     try:
         # permits data
         # cur.execute(permits_raw_copy.format(FILE=file))
         # logger.info(f'Query successful')
 
         # titanic data for testing
-        cur.execute(titanic_data_copy.format(FILE=file))
+        cur.execute(titanic_data_update.format(FILE=file))
         logger.info(f'Query successful')
-        logger.debug(titanic_data_copy.format(FILE=file))
+        logger.debug(titanic_data_update.format(FILE=file))
 
         conn.commit()
         cur.close()

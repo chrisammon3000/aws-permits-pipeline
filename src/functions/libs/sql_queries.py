@@ -145,6 +145,33 @@ titanic_data_copy = ("""
     );
 """)
 
+titanic_data_update = ("""
+    CREATE TEMP TABLE tmp_titanic_data AS SELECT * FROM titanic_data LIMIT 0;
+    SELECT aws_s3.table_import_from_s3(
+        'tmp_titanic_data',
+        '',
+        '(FORMAT CSV)',
+        aws_commons.create_s3_uri('aws-permits-analysis', '{FILE}}', 'us-east-1')
+    );
+    UPDATE titanic_data
+    SET "pclass" = tmp_titanic_data."pclass",
+        "survived" = tmp_titanic_data."survived",
+        "name" = tmp_titanic_data."name",
+        "sex" = tmp_titanic_data."sex",
+        "age" = tmp_titanic_data."age",
+        "sibsp" = tmp_titanic_data."sibsp",
+        "parch" = tmp_titanic_data."parch",
+        "ticket" = tmp_titanic_data."ticket",
+        "fare" = tmp_titanic_data."fare",
+        "cabin" = tmp_titanic_data."cabin",
+        "embarked" = tmp_titanic_data."embarked",
+        "boat" = tmp_titanic_data."boat",
+        "body" = tmp_titanic_data."body",
+        "home.dest" = tmp_titanic_data."home.dest"
+    FROM tmp_titanic_data
+    WHERE titanic_data.name = tmp_titanic_data.name;
+""")
+
 # QUERIES
 list_columns_types_query = ("""
     SELECT column_name, data_type
