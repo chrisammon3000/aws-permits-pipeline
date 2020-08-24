@@ -33,7 +33,6 @@ Parameters:
     Default: '{{resolve:ssm-secure:/permits/db_password:1}}'
     NoEcho: True
 Resources:
-######
   RDSS3ImportRole:
     Type: AWS::IAM::Role
     Properties:
@@ -50,7 +49,7 @@ Resources:
     Type: AWS::IAM::Policy
     Properties:
       PolicyName: rds-s3-import-policy
-      PolicyDocument:  # policy document - can be JSON or YAML
+      PolicyDocument:
         Version: "2012-10-17"
         Statement: 
           - Sid: s3import
@@ -61,8 +60,8 @@ Resources:
             Resource: 
               - arn:aws:s3:::aws-permits-analysis
               - arn:aws:s3:::aws-permits-analysis/*
-
-######
+      Roles: 
+        - !Ref RDSS3ImportRole
   PermitsDB:
     Type: AWS::RDS::DBInstance
     Properties:
