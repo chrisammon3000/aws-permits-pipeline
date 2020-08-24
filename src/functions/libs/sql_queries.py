@@ -127,7 +127,7 @@ permits_raw_table_create = ("""
 """)
 
 # COPY DATA
-copy_permits_raw = ("""
+permits_raw_copy = ("""
     SELECT aws_s3.table_import_from_s3(
     'permits_raw',
     '',
@@ -136,7 +136,7 @@ copy_permits_raw = ("""
     );
 """)
 
-copy_titanic_data = ("""
+titanic_data_copy = ("""
     SELECT aws_s3.table_import_from_s3(
     'titanic_data',
     '',
@@ -158,8 +158,7 @@ list_columns_types_query = ("""
 # geocode
 
 # Query Lists 
-install_ext_queries = [install_ext_aws_s3, install_ext_postgis]
-create_table_queries = [permits_raw_table_create]
-
+titanic_init_queries = [install_ext_aws_s3, titanic_table_create]
+permits_init_queries = [install_ext_aws_s3, install_ext_postgis, permits_raw_table_create]
 
 

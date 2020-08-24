@@ -20,7 +20,7 @@ custom:
   db_user: ${ssm:/permits/db_user}
   db_password: ${ssm:/permits/db_password~true}
   db_port: ${cf:building-permits-aws-pipeline.PortDB}
-  db_endpoint: ${cf:building-permits-aws-pipeline.EndpointDB}
+  db_endpoint: ${cf:building-permits-aws-pipeline.EndpointDB} # remember to add "-cfn" to stack name
   
 provider:
   name: aws
@@ -67,7 +67,7 @@ functions:
       PERMITS_URL: ${self:custom.permits_url}
       FILENAME: ${self:custom.filename}
     events:
-      - schedule: rate(1 day)
+      - schedule: rate(1 hour)
   loadData:
     handler: load_data.load_data
     package:
@@ -83,3 +83,11 @@ functions:
       DB_PASSWORD: ${self:custom.db_password}
       DB_PORT: ${self:custom.db_port}
       DB_ENDPOINT: ${self:custom.db_endpoint}
+    events:
+      - s3:
+          bucket: ${self:custom.bucket}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: ${self:custom.s3_raw_folder}
+            - suffix: .csv
+          existing: true

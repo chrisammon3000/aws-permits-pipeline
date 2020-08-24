@@ -55,29 +55,22 @@ git clone \
    ```
    npm install -g serverless
    ```
-     You will see an output with the API endpoints something like:
-     ```
-     endpoints:
-       GET - https://XXXXXXXXX.execute-api.us-east-1.amazonaws.com/dev/init
-       GET - https://XXXXXXXXX.execute-api.us-east-1.amazonaws.com/dev/start
-     ```
-     These are used to initialize the database and start the pipeline once the RDS instance is running.
 
-1. *(optional)* Edit the file `scripts/set_parameters.sh` to set the parameters for the database name, username and password.
-2. Run the script:
+3. *(optional)* Edit the file `scripts/set_parameters.sh` to set the parameters for the database name, username and password.
+4. Run the script:
    ```
    bash scripts/set_parameters.sh
    ```
-3. Deploy the RDS stack:
+5. Deploy the RDS stack:
    ```
-   aws cloudformation deploy --template-file cfn/rds.yml --stack-name building-permits-aws-pipeline --capabilities CAPABILITY_IAM
+   aws cloudformation deploy --template-file cfn/rds.yml --stack-name building-permits-aws-pipeline-cfn --capabilities CAPABILITY_IAM
    ```
-4. Deploy Serverless stack:
+6. Deploy Serverless stack:
    ```
    cd src/functions
    serverless deploy
    ```
-5. Once the RDS instance is up and running, ping API Gateway to initialize and run the first pipeline:
+7. Once the RDS instance is up and running, ping API Gateway to initialize and run the first pipeline:
    ```
    curl https://XXXXXXX.execute-api.us-east-1.amazonaws.com/dev/init
    ```

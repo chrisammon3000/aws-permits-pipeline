@@ -2,7 +2,7 @@ import os
 import logging
 import json
 import psycopg2
-from libs.sql_queries import permits_raw_table_create, titanic_table_create
+from libs.sql_queries import permits_init_queries, titanic_init_queries
 
 DB_ENDPOINT = os.environ['DB_ENDPOINT']
 DB_NAME = os.environ['DB_NAME']
@@ -22,6 +22,7 @@ def init_db(event, context):
         conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, 
                                 password=DB_PASSWORD, 
                                 host=DB_ENDPOINT)
+        conn.set_session(autocommit=True)
         cur = conn.cursor()
         logger.info(f'Connected to "{DB_NAME}" at "{DB_ENDPOINT}"')
     except Exception as err:
@@ -29,33 +30,55 @@ def init_db(event, context):
         return -1
 
     try:
-        logger.info("Executing query...")
-        # Alternate with titanic data for testing
-        cur.execute(titanic_table_create.format(DB_NAME=DB_NAME,DB_USER=DB_USER))
-        # cur.execute(permits_raw_table_create.format(DB_NAME=DB_NAME,DB_USER=DB_USER))
+        logger.info("Executing queries...")
+
+        # permits data
+        # try:
+        #     cur.execute(permits_init_queries[0])
+        #     logger.info(f'Queries successful: {permits_init_queries[0]}')
+        # except Exception as err:
+        #     logger.info(f'Error: {err}')
+        #     logger.info(f'Unsuccessful query: "{titanic_init_queries[0]}"')
+
+        # try:
+        #     cur.execute(permits_init_queries[1])
+        #     logger.info(f'Queries successful: {permits_init_queries[1]}')
+        # except Exception as err:
+        #     logger.info(f'Error: {err}')
+        #     logger.info(f'Unsuccessful query: "{titanic_init_queries[0]}"')
+
+        # try:
+        #     cur.execute(permits_init_queries[2].format(DB_NAME=DB_NAME,DB_USER=DB_USER))
+        #     logger.info(f'Query successful: {permits_init_queries[2].format(DB_NAME=DB_NAME,DB_USER=DB_USER)}')
+        # except Exception as err:
+        #     logger.info(f'Error: {err}')
+        #     logger.info(f'Unsuccessful query: "{titanic_init_queries[0]}"')
+
+        # titanic data for testing
+        try:
+            cur.execute(titanic_init_queries[0])
+            logger.info(f'Query successful: "{titanic_init_queries[0]}"')
+        except Exception as err:
+            logger.info(f'Error: {err}')
+            logger.info(f'Unsuccessful query: "{titanic_init_queries[0]}"')
+
+        try:
+            cur.execute(titanic_init_queries[1].format(DB_NAME=DB_NAME,DB_USER=DB_USER))
+            logger.info(f'Query successful: "{titanic_init_queries[1].format(DB_NAME=DB_NAME,DB_USER=DB_USER)}"')
+        except Exception as err:
+            logger.info(f'Error: {err}')
+            logger.info(f'Unsuccessful query: "{titanic_init_queries[1].format(DB_NAME=DB_NAME,DB_USER=DB_USER)}"')
+
+
         conn.commit()
-        logger.info('Query successful')
         cur.close()
+
         logger.info(f'Closed connection to "{DB_NAME}" at "{DB_ENDPOINT}')
     except Exception as err:
         logger.error(f'Error: "{err}"')
         cur.close()
         logger.info(f'Closed connection to "{DB_NAME}" at "{DB_ENDPOINT}')
         return -1
-
-    # msg = json.loads(event["Records"][0]["Sns"]["Message"])
-    # topic = event["Records"][0]["Sns"]["TopicArn"]
-    # subject = event["Records"][0]["Sns"]["Subject"]
-    
-    # print(type(msg))
-
-    # for item in [msg, topic, subject]:
-    #     logger.info(item)
-    
-    # if msg["Event Message"] in ['DB instance created']:
-    #     print("Fetch data!!!")
-
-    #print("INIT QUERY:\n", permits_raw_table_create)
 
     return 0
 
