@@ -59,7 +59,6 @@ def init_db(event, context):
         except Exception as err:
             logger.error(f'Unsuccessful query, Error: {err}')
 
-
         # # titanic data for testing
         # try:
         #     cur.execute(titanic_init_queries[0])

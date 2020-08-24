@@ -49,6 +49,7 @@ git clone \
 1. Install and configure awscli. Anaconda users can run:
    ```
    conda install -c conda-forge awscli
+   aws configure
    ```
 
 2. Install Serverless framework (using npm):
@@ -70,16 +71,9 @@ git clone \
    cd src/functions
    serverless deploy
    ```
-7. Once the RDS instance is up and running, ping API Gateway to initialize and run the first pipeline:
-   ```
-   curl https://XXXXXXX.execute-api.us-east-1.amazonaws.com/dev/init
-   ```
 
 ### Running the Pipeline
-   Ping API Gateway endpoint to run the pipeline again and fetch the most recent data:
-   ```
-   curl https://XXXXXXX.execute-api.us-east-1.amazonaws.com/dev/run
-   ```
+
 
 ### Accessing the database
    Open the notebook `0.1-building-permits-aws-pipeline` to run queries on the database and explore the data:
