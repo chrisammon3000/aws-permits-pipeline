@@ -37,11 +37,24 @@ test_postgis_tiger_query = ("""
 test_postgis_tiger_output = "1 Devonshire Pl 02109"
 
 # CREATE TABLES, "permitsDB", postgres
-titanic_create_table = ("""
+titanic_table_create = ("""
     GRANT ALL PRIVILEGES ON DATABASE "{DB_NAME}" TO {DB_USER};
     DROP TABLE IF EXISTS titanic_data;
     CREATE TABLE titanic_data (
-        
+        "pclass" TEXT,
+        "survived" TEXT,
+        "name" TEXT,
+        "sex" TEXT,
+        "age" TEXT,
+        "sibsp" TEXT,
+        "parch" TEXT,
+        "ticket" TEXT,
+        "fare" TEXT,
+        "cabin" TEXT,
+        "embarked" TEXT,
+        "boat" TEXT,
+        "body" TEXT,
+        "home.dest" TEXT
     );
     SET statement_timeout = '30s';
 """)
@@ -114,9 +127,18 @@ permits_raw_table_create = ("""
 """)
 
 # COPY DATA
-copy_raw_permits = ("""
+copy_permits_raw = ("""
     SELECT aws_s3.table_import_from_s3(
     'permits_raw',
+    '',
+    '(FORMAT CSV)', 
+    aws_commons.create_s3_uri('aws-permits-analysis', '{FILE}', 'us-east-1')
+    );
+""")
+
+copy_titanic_data = ("""
+    SELECT aws_s3.table_import_from_s3(
+    'titanic_data',
     '',
     '(FORMAT CSV)', 
     aws_commons.create_s3_uri('aws-permits-analysis', '{FILE}', 'us-east-1')

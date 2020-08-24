@@ -77,11 +77,10 @@ git clone \
    cd src/functions
    serverless deploy
    ```
-5. Once the RDS instance is up and running, ping API Gateway to initialize and run the pipeline:
+5. Once the RDS instance is up and running, ping API Gateway to initialize and run the first pipeline:
    ```
    curl https://XXXXXXX.execute-api.us-east-1.amazonaws.com/dev/init
    ```
-    This will also run the pipeline for the first time.
 
 ### Running the Pipeline
    Ping API Gateway endpoint to run the pipeline again and fetch the most recent data:
@@ -90,7 +89,7 @@ git clone \
    ```
 
 ### Accessing the database
-   Open the notebook `0.1-building-permits-aws-pipeline` to run queries on the database:
+   Open the notebook `0.1-building-permits-aws-pipeline` to run queries on the database and explore the data:
    ```
    cd notebooks
    jupyter notebook

@@ -37,7 +37,6 @@ provider:
         - s3:ListBucket
         - s3:GetObjectAcl
       Resource: arn:aws:s3:::${self:custom.bucket}/*
-
 functions:
   initDatabase:
     handler: init_db.init_db
@@ -54,10 +53,6 @@ functions:
       DB_PASSWORD: ${self:custom.db_password}
       DB_PORT: ${self:custom.db_port}
       DB_ENDPOINT: ${self:custom.db_endpoint}
-    events:
-      - http:
-          path: init
-          method: get
   fetchData:
     handler: fetch_data.fetch_data
     layers: 
@@ -73,11 +68,8 @@ functions:
       FILENAME: ${self:custom.filename}
     events:
       - schedule: rate(1 day)
-      - http:
-          path: start
-          method: get
-  loadDatabase:
-    handler: load_db.load_db
+  loadData:
+    handler: load_data.load_data
     package:
       include:
           - libs/sql_queries.py
@@ -91,4 +83,3 @@ functions:
       DB_PASSWORD: ${self:custom.db_password}
       DB_PORT: ${self:custom.db_port}
       DB_ENDPOINT: ${self:custom.db_endpoint}
-
