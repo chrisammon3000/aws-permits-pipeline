@@ -3,7 +3,7 @@ Description: "Deploys a single PostgreSQL RDS instance."
 Parameters:
   AppName:
     Type: String
-    Default: "building-permits-aws-pipeline"
+    Default: "aws-building-permits-pipeline"
   DBInstanceIdentifier:
     Type: String
     Default: "permits-dev-1"

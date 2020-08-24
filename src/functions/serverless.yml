@@ -1,4 +1,4 @@
-service: building-permits-aws-pipeline
+service: aws-building-permits-pipeline
 
 plugins:
   - serverless-python-requirements
@@ -20,7 +20,7 @@ custom:
   db_user: ${ssm:/permits/db_user}
   db_password: ${ssm:/permits/db_password~true}
   db_port: ${cf:building-permits-aws-pipeline.PortDB}
-  db_endpoint: ${cf:building-permits-aws-pipeline.EndpointDB} # remember to add "-cfn" to stack name
+  db_endpoint: ${cf:aws-building-permits-pipeline.EndpointDB} # remember to add "-cfn" to stack name
   
 provider:
   name: aws
