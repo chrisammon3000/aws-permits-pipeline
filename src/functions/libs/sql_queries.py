@@ -126,25 +126,17 @@ permits_raw_table_create = ("""
     SET statement_timeout = '30s';
 """)
 
-# COPY DATA
-permits_raw_copy = ("""
-    SELECT aws_s3.table_import_from_s3(
-    'permits_raw',
-    '',
-    '(FORMAT CSV)', 
-    aws_commons.create_s3_uri('aws-permits-analysis', '{FILE}', 'us-east-1')
-    );
-""")
+# UPSERT DATA
 
 permits_raw_update = ("""
     CREATE TEMP TABLE tmp_permits_raw AS SELECT * FROM permits_raw LIMIT 0;
     SELECT aws_s3.table_import_from_s3(
         'tmp_permits_raw',
         '',
-        '(FORMAT CSV)',
+        '(FORMAT CSV, HEADER true)',
         aws_commons.create_s3_uri('aws-permits-analysis', '{FILE}', 'us-east-1')
     );
-    
+
     LOCK TABLE permits_raw IN EXCLUSIVE MODE;
 
     UPDATE permits_raw
@@ -208,7 +200,7 @@ permits_raw_update = ("""
         "Existing Code" = tmp_permits_raw."Existing Code",
         "Proposed Code" = tmp_permits_raw."Proposed Code"
     FROM tmp_permits_raw
-    WHERE permits_raw."name" = tmp_permits_raw."name";
+    WHERE permits_raw."PCIS Permit #" = tmp_permits_raw."PCIS Permit #";
 
     INSERT INTO permits_raw
     SELECT tmp_permits_raw."Assessor Book",
@@ -270,21 +262,13 @@ permits_raw_update = ("""
         tmp_permits_raw."Applicant Relationship",
         tmp_permits_raw."Existing Code",
         tmp_permits_raw."Proposed Code"
-    LEFT OUTER JOIN permits_raw ON permits_raw."name" = tmp_permits_raw."name"
-    WHERE permits_raw."name" IS NULL;
+    FROM tmp_permits_raw
+    LEFT OUTER JOIN permits_raw ON permits_raw."PCIS Permit #" = tmp_permits_raw."PCIS Permit #"
+    WHERE permits_raw."PCIS Permit #" IS NULL;
 
     COMMIT;
 
     DROP TABLE tmp_permits_raw;
-""")
-
-titanic_data_copy = ("""
-    SELECT aws_s3.table_import_from_s3(
-    'titanic_data',
-    '',
-    '(FORMAT CSV)', 
-    aws_commons.create_s3_uri('aws-permits-analysis', '{FILE}', 'us-east-1')
-    );
 """)
 
 titanic_data_update = ("""
@@ -292,7 +276,7 @@ titanic_data_update = ("""
     SELECT aws_s3.table_import_from_s3(
         'tmp_titanic_data',
         '',
-        '(FORMAT CSV)',
+        '(FORMAT CSV, HEADER true)',
         aws_commons.create_s3_uri('aws-permits-analysis', '{FILE}', 'us-east-1')
     );
     

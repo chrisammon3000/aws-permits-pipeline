@@ -58,7 +58,7 @@ functions:
     layers: 
       - arn:aws:lambda:us-east-1:531868584498:layer:requestsLayer-p36-p37-p38:1
     timeout: 200
-    memorySize: 1536
+    memorySize: 3008
     environment:
       S3_BUCKET: ${self:custom.bucket}
       S3_RAW_FOLDER: ${self:custom.s3_raw_folder}

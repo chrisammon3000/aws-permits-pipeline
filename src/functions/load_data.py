@@ -11,7 +11,7 @@ DB_PASSWORD = os.environ['DB_PASSWORD']
 DB_PORT = os.environ['DB_PORT']
 
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 def load_data(event, context):
 
