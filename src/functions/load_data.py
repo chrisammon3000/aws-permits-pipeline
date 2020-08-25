@@ -43,7 +43,6 @@ def load_data(event, context):
         # Will need function to determine S3 bucket region
         cur.execute(titanic_data_update.format(FILE=file))
         logger.info(f'Query successful')
-        logger.debug(titanic_data_update.format(FILE=file))
 
         conn.commit()
         cur.close()
