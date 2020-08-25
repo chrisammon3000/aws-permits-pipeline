@@ -136,6 +136,148 @@ permits_raw_copy = ("""
     );
 """)
 
+permits_raw_update = ("""
+    CREATE TEMP TABLE tmp_permits_raw AS SELECT * FROM permits_raw LIMIT 0;
+    SELECT aws_s3.table_import_from_s3(
+        'tmp_permits_raw',
+        '',
+        '(FORMAT CSV)',
+        aws_commons.create_s3_uri('aws-permits-analysis', '{FILE}', 'us-east-1')
+    );
+    
+    LOCK TABLE permits_raw IN EXCLUSIVE MODE;
+
+    UPDATE permits_raw
+    SET "Assessor Book" = tmp_permits_raw."Assessor Book",
+        "Assessor Page" = tmp_permits_raw."Assessor Page",
+        "Assessor Parcel" = tmp_permits_raw."Assessor Parcel",
+        "Tract" = tmp_permits_raw."Tract",
+        "Block" = tmp_permits_raw."Block",
+        "Lot" = tmp_permits_raw."Lot",
+        "Reference # (Old Permit #)" = tmp_permits_raw."Reference # (Old Permit #)",
+        "PCIS Permit #" = tmp_permits_raw."PCIS Permit #",
+        "Status" = tmp_permits_raw."Status",
+        "Status Date" = tmp_permits_raw."Status Date",
+        "Permit Type" = tmp_permits_raw."Permit Type",
+        "Permit Sub-Type" = tmp_permits_raw."Permit Sub-Type",
+        "Permit Category" = tmp_permits_raw."Permit Category",
+        "Project Number" = tmp_permits_raw."Project Number",
+        "Event Code" = tmp_permits_raw."Event Code",
+        "Initiating Office" = tmp_permits_raw."Initiating Office",
+        "Issue Date" = tmp_permits_raw."Issue Date",
+        "Address Start" = tmp_permits_raw."Address Start",
+        "Address Fraction Start" = tmp_permits_raw."Address Fraction Start",
+        "Address End" = tmp_permits_raw."Address End",
+        "Address Fraction End" = tmp_permits_raw."Address Fraction End",
+        "Street Direction" = tmp_permits_raw."Street Direction",
+        "Street Name" = tmp_permits_raw."Street Name",
+        "Street Suffix" = tmp_permits_raw."Street Suffix",
+        "Suffix Direction" = tmp_permits_raw."Suffix Direction",
+        "Unit Range Start" = tmp_permits_raw."Unit Range Start",
+        "Unit Range End" = tmp_permits_raw."Unit Range End",
+        "Zip Code" = tmp_permits_raw."Zip Code",
+        "Work Description" = tmp_permits_raw."Work Description",
+        "Valuation" = tmp_permits_raw."Valuation",
+        "Floor Area-L.A. Zoning Code Definition" = tmp_permits_raw."Floor Area-L.A. Zoning Code Definition",
+        "# of Residential Dwelling Units" = tmp_permits_raw."# of Residential Dwelling Units",
+        "# of Accessory Dwelling Units" = tmp_permits_raw."# of Accessory Dwelling Units",
+        "# of Stories" = tmp_permits_raw."# of Stories",
+        "Contractor's Business Name" = tmp_permits_raw."Contractor's Business Name",
+        "Contractor Address" = tmp_permits_raw."Contractor Address",
+        "Contractor City" = tmp_permits_raw."Contractor City",
+        "Contractor State" = tmp_permits_raw."Contractor State",
+        "License Type" = tmp_permits_raw."License Type",
+        "License #" = tmp_permits_raw."License #",
+        "Principal First Name" = tmp_permits_raw."Principal First Name",
+        "Principal Middle Name" = tmp_permits_raw."Principal Middle Name",
+        "Principal Last Name" = tmp_permits_raw."Principal Last Name",
+        "License Expiration Date" = tmp_permits_raw."License Expiration Date",
+        "Applicant First Name" = tmp_permits_raw."Applicant First Name",
+        "Applicant Last Name" = tmp_permits_raw."Applicant Last Name",
+        "Applicant Business Name" = tmp_permits_raw."Applicant Business Name",
+        "Applicant Address 1" = tmp_permits_raw."Applicant Address 1",
+        "Applicant Address 2" = tmp_permits_raw."Applicant Address 2",
+        "Applicant Address 3" = tmp_permits_raw."Applicant Address 3",
+        "Zone" = tmp_permits_raw."Zone",
+        "Occupancy" = tmp_permits_raw."Occupancy",
+        "Floor Area-L.A. Building Code Definition" = tmp_permits_raw."Floor Area-L.A. Building Code Definition",
+        "Census Tract" = tmp_permits_raw."Census Tract",
+        "Council District" = tmp_permits_raw."Council District",
+        "Latitude/Longitude" = tmp_permits_raw."Latitude/Longitude",
+        "Applicant Relationship" = tmp_permits_raw."Applicant Relationship",
+        "Existing Code" = tmp_permits_raw."Existing Code",
+        "Proposed Code" = tmp_permits_raw."Proposed Code"
+    FROM tmp_permits_raw
+    WHERE permits_raw."name" = tmp_permits_raw."name";
+
+    INSERT INTO permits_raw
+    SELECT tmp_permits_raw."Assessor Book",
+        tmp_permits_raw."Assessor Page",
+        tmp_permits_raw."Assessor Parcel",
+        tmp_permits_raw."Tract",
+        tmp_permits_raw."Block",
+        tmp_permits_raw."Lot",
+        tmp_permits_raw."Reference # (Old Permit #)",
+        tmp_permits_raw."PCIS Permit #",
+        tmp_permits_raw."Status",
+        tmp_permits_raw."Status Date",
+        tmp_permits_raw."Permit Type",
+        tmp_permits_raw."Permit Sub-Type",
+        tmp_permits_raw."Permit Category",
+        tmp_permits_raw."Project Number",
+        tmp_permits_raw."Event Code",
+        tmp_permits_raw."Initiating Office",
+        tmp_permits_raw."Issue Date",
+        tmp_permits_raw."Address Start",
+        tmp_permits_raw."Address Fraction Start",
+        tmp_permits_raw."Address End",
+        tmp_permits_raw."Address Fraction End",
+        tmp_permits_raw."Street Direction",
+        tmp_permits_raw."Street Name",
+        tmp_permits_raw."Street Suffix",
+        tmp_permits_raw."Suffix Direction",
+        tmp_permits_raw."Unit Range Start",
+        tmp_permits_raw."Unit Range End",
+        tmp_permits_raw."Zip Code",
+        tmp_permits_raw."Work Description",
+        tmp_permits_raw."Valuation",
+        tmp_permits_raw."Floor Area-L.A. Zoning Code Definition",
+        tmp_permits_raw."# of Residential Dwelling Units",
+        tmp_permits_raw."# of Accessory Dwelling Units",
+        tmp_permits_raw."# of Stories",
+        tmp_permits_raw."Contractor's Business Name",
+        tmp_permits_raw."Contractor Address",
+        tmp_permits_raw."Contractor City",
+        tmp_permits_raw."Contractor State",
+        tmp_permits_raw."License Type",
+        tmp_permits_raw."License #",
+        tmp_permits_raw."Principal First Name",
+        tmp_permits_raw."Principal Middle Name",
+        tmp_permits_raw."Principal Last Name",
+        tmp_permits_raw."License Expiration Date",
+        tmp_permits_raw."Applicant First Name",
+        tmp_permits_raw."Applicant Last Name",
+        tmp_permits_raw."Applicant Business Name",
+        tmp_permits_raw."Applicant Address 1",
+        tmp_permits_raw."Applicant Address 2",
+        tmp_permits_raw."Applicant Address 3",
+        tmp_permits_raw."Zone",
+        tmp_permits_raw."Occupancy",
+        tmp_permits_raw."Floor Area-L.A. Building Code Definition",
+        tmp_permits_raw."Census Tract",
+        tmp_permits_raw."Council District",
+        tmp_permits_raw."Latitude/Longitude",
+        tmp_permits_raw."Applicant Relationship",
+        tmp_permits_raw."Existing Code",
+        tmp_permits_raw."Proposed Code"
+    LEFT OUTER JOIN permits_raw ON permits_raw."name" = tmp_permits_raw."name"
+    WHERE permits_raw."name" IS NULL;
+
+    COMMIT;
+
+    DROP TABLE tmp_permits_raw;
+""")
+
 titanic_data_copy = ("""
     SELECT aws_s3.table_import_from_s3(
     'titanic_data',

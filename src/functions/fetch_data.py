@@ -57,3 +57,7 @@ def download_csv(url, file_path):
         return -1
 
     return 0
+
+
+    if __name__ == "__main__":
+        fetch_data("", "")

@@ -2,7 +2,7 @@ import os
 import logging
 import json
 import psycopg2
-from libs.sql_queries import permits_raw_copy, titanic_data_update
+from libs.sql_queries import permits_raw_update #, titanic_data_update
 
 DB_ENDPOINT = os.environ['DB_ENDPOINT']
 DB_NAME = os.environ['DB_NAME']
@@ -32,17 +32,17 @@ def load_data(event, context):
         return -1
         
     logger.info(f'Executing query: "COPY"')
-    # logger.debug(permits_raw_copy.format(FILE=file))
-    logger.debug(titanic_data_update.format(FILE=file))
+    logger.debug(permits_raw_update.format(FILE=file))
+    # logger.debug(titanic_data_update.format(FILE=file))
     try:
         # permits data
-        # cur.execute(permits_raw_copy.format(FILE=file))
-        # logger.info(f'Query successful')
-
-        # titanic data for testing
-        # Will need function to determine S3 bucket region
-        cur.execute(titanic_data_update.format(FILE=file))
+        cur.execute(permits_raw_update.format(FILE=file))
         logger.info(f'Query successful')
+
+        # # titanic data for testing
+        # # Will need function to determine S3 bucket region
+        # cur.execute(titanic_data_update.format(FILE=file))
+        # logger.info(f'Query successful')
 
         conn.commit()
         cur.close()
