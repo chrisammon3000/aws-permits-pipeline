@@ -11,7 +11,7 @@ DB_PASSWORD = os.environ['DB_PASSWORD']
 DB_PORT = os.environ['DB_PORT']
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 def init_db(event, context):
 
@@ -75,7 +75,7 @@ def init_db(event, context):
         logger.debug(titanic_init_queries[1].format(DB_NAME=DB_NAME,DB_USER=DB_USER))
         try:
             cur.execute(titanic_init_queries[1].format(DB_NAME=DB_NAME,DB_USER=DB_USER))
-            logger.info(f'Query successful:)
+            logger.info('Query successful')
         except Exception as err:
             logger.error(f'Unsuccessful query, Error: {err}')
 

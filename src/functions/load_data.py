@@ -11,7 +11,7 @@ DB_PASSWORD = os.environ['DB_PASSWORD']
 DB_PORT = os.environ['DB_PORT']
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 def load_data(event, context):
 
@@ -40,6 +40,7 @@ def load_data(event, context):
         # logger.info(f'Query successful')
 
         # titanic data for testing
+        # Will need function to determine S3 bucket region
         cur.execute(titanic_data_update.format(FILE=file))
         logger.info(f'Query successful')
         logger.debug(titanic_data_update.format(FILE=file))

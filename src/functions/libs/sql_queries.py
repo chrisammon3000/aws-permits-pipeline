@@ -151,8 +151,11 @@ titanic_data_update = ("""
         'tmp_titanic_data',
         '',
         '(FORMAT CSV)',
-        aws_commons.create_s3_uri('aws-permits-analysis', '{FILE}}', 'us-east-1')
+        aws_commons.create_s3_uri('aws-permits-analysis', '{FILE}', 'us-east-1')
     );
+    
+    LOCK TABLE titanic_data IN EXCLUSIVE MODE;
+
     UPDATE titanic_data
     SET "pclass" = tmp_titanic_data."pclass",
         "survived" = tmp_titanic_data."survived",
@@ -169,7 +172,23 @@ titanic_data_update = ("""
         "body" = tmp_titanic_data."body",
         "home.dest" = tmp_titanic_data."home.dest"
     FROM tmp_titanic_data
-    WHERE titanic_data.name = tmp_titanic_data.name;
+    WHERE titanic_data."name" = tmp_titanic_data."name";
+
+    INSERT INTO titanic_data
+    SELECT tmp_titanic_data."pclass", tmp_titanic_data."survived", 
+        tmp_titanic_data."name", tmp_titanic_data."sex", 
+        tmp_titanic_data."age", tmp_titanic_data."sibsp", 
+        tmp_titanic_data."parch", tmp_titanic_data."ticket", 
+        tmp_titanic_data."fare", tmp_titanic_data."cabin", 
+        tmp_titanic_data."embarked", tmp_titanic_data."boat", 
+        tmp_titanic_data."body", tmp_titanic_data."home.dest"
+    FROM tmp_titanic_data
+    LEFT OUTER JOIN titanic_data ON titanic_data."name" = tmp_titanic_data."name"
+    WHERE titanic_data."name" IS NULL;
+
+    COMMIT;
+
+    DROP TABLE tmp_titanic_data;
 """)
 
 # QUERIES

@@ -19,7 +19,7 @@ custom:
   db_name: ${ssm:/permits/db_name}
   db_user: ${ssm:/permits/db_user}
   db_password: ${ssm:/permits/db_password~true}
-  db_port: ${cf:building-permits-aws-pipeline.PortDB}
+  db_port: ${cf:aws-building-permits-pipeline-cfn-3.PortDB}
   db_endpoint: ${cf:aws-building-permits-pipeline-cfn-3.EndpointDB} # remember to add "-cfn" to stack name
   
 provider:
