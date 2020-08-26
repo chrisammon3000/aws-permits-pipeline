@@ -9,18 +9,17 @@ package:
 custom:
   pythonRequirements:
     dockerizePip: non-linux
-  bucket: aws-permits-analysis
+  cfn_stack: aws-building-permits-pipeline-cfn-4
+  bucket: ${cf:${self:custom.cfn_stack}.DataBucket}
   s3_raw_folder: "data/raw/"
-  s3_int_folder: "data/interim/"
-  s3_processed_folder: "data/processed/"
-  permits_url: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
-  #permits_url: "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj"
-  filename: "permits"
+  #permits_url: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
+  permits_url: "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj"
+  filename: "titanic"
   db_name: ${ssm:/permits/db_name}
   db_user: ${ssm:/permits/db_user}
   db_password: ${ssm:/permits/db_password~true}
-  db_port: ${cf:aws-building-permits-pipeline-cfn-3.PortDB}
-  db_endpoint: ${cf:aws-building-permits-pipeline-cfn-3.EndpointDB} # remember to add "-cfn" to stack name
+  db_port: ${cf:${self:custom.cfn_stack}.PortDB}
+  db_endpoint: ${cf:${self:custom.cfn_stack}.EndpointDB} # remember to add "-cfn" to stack name
   
 provider:
   name: aws
@@ -62,8 +61,6 @@ functions:
     environment:
       S3_BUCKET: ${self:custom.bucket}
       S3_RAW_FOLDER: ${self:custom.s3_raw_folder}
-      S3_INT_FOLDER: ${self:custom.s3_int_folder}
-      S3_PROCESSED_FOLDER: ${self:custom.s3_processed_folder}
       PERMITS_URL: ${self:custom.permits_url}
       FILENAME: ${self:custom.filename}
     events:
@@ -90,4 +87,3 @@ functions:
           rules:
             - prefix: ${self:custom.s3_raw_folder}
             - suffix: .csv
-          existing: true

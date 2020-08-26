@@ -3,10 +3,10 @@ Description: "Deploys a single PostgreSQL RDS instance."
 Parameters:
   AppName:
     Type: String
-    Default: "aws-building-permits-pipeline"
+    Default: "aws-building-permits-pipeline-4"
   DBInstanceIdentifier:
     Type: String
-    Default: "permits-dev-3"
+    Default: "permits-dev-4"
   DBEngine:
     Type: String
     Default: "postgres"
@@ -32,6 +32,12 @@ Parameters:
     Type: String
     Default: '{{resolve:ssm-secure:/permits/db_password:1}}'
     NoEcho: True
+  BucketName: 
+    Type: String
+    Default: Fn::Join
+      - ''
+      - - !Ref AppName
+        - '-data'
 Resources:
   RDSS3ImportPolicy:
     Type: AWS::IAM::Policy
@@ -80,6 +86,10 @@ Resources:
       Tags:
         - Key: App
           Value: !Ref AppName
+  DataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
 Outputs:
   EndpointDB:
     Description: "Endpoint of the newly created Permits RDS instance"
@@ -87,3 +97,6 @@ Outputs:
   PortDB:
     Description: "Port of the newly created Permits RDS instance"
     Value: !GetAtt PermitsDB.Endpoint.Port
+  DataBucket:
+    Description: "S3 Bucket for storing permits data."
+    Value: !Ref DataBucket

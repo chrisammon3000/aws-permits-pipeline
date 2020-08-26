@@ -12,6 +12,7 @@ S3_BUCKET = os.environ['S3_BUCKET']
 S3_RAW_FOLDER = os.environ['S3_RAW_FOLDER']
 URL = os.environ['PERMITS_URL']
 FILENAME = os.environ['FILENAME']
+S3_PATH = S3_BUCKET + "/" + S3_RAW_FOLDER
 
 s3 = boto3.resource('s3')
 bucket = s3.Bucket(S3_BUCKET)
@@ -29,7 +30,7 @@ def fetch_data(event, context):
 
     try:
         bucket.upload_file(file_path, S3_RAW_FOLDER + file)
-        logger.info(f'File "{file_path}" uploaded as S3 object: "{S3_RAW_FOLDER + file}"')
+        logger.info(f'File "{file_path}" uploaded as S3 object: "{S3_PATH + file}"')
     except Exception as e:
         logger.info(f"Error uploading to S3: {e}")
         return -1

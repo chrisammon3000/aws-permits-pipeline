@@ -67,6 +67,7 @@ git clone \
    ```
    aws cloudformation deploy --template-file cfn/rds.yml --stack-name aws-building-permits-pipeline-cfn --capabilities CAPABILITY_NAMED_IAM
    ```
+   Note: the `--stack-name` parameter must match the `cfn_stack` custom variable in the serverless.yml file.
 6. Deploy Serverless stack:
    ```
    cd src/functions

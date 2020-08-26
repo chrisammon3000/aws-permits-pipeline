@@ -134,7 +134,7 @@ permits_raw_update = ("""
         'tmp_permits_raw',
         '',
         '(FORMAT CSV, HEADER true)',
-        aws_commons.create_s3_uri('aws-permits-analysis', '{FILE}', 'us-east-1')
+        aws_commons.create_s3_uri('{S3_BUCKET}', '{FILE}', 'us-east-1')
     );
 
     LOCK TABLE permits_raw IN EXCLUSIVE MODE;
@@ -277,7 +277,7 @@ titanic_data_update = ("""
         'tmp_titanic_data',
         '',
         '(FORMAT CSV, HEADER true)',
-        aws_commons.create_s3_uri('aws-permits-analysis', '{FILE}', 'us-east-1')
+        aws_commons.create_s3_uri('{S3_BUCKET}', '{FILE}', 'us-east-1')
     );
     
     LOCK TABLE titanic_data IN EXCLUSIVE MODE;
