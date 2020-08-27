@@ -88,7 +88,7 @@ Resources:
               Service:
                 - rds.amazonaws.com
             Action: sts:AssumeRole
-  PermitsDB:
+  RDSInstance:
     Type: AWS::RDS::DBInstance
     Properties:
       DBInstanceIdentifier: !Join 
@@ -125,11 +125,11 @@ Resources:
           - !Ref AWS::AccountId
 Outputs:
   EndpointDB:
-    Description: "Endpoint of the newly created Permits RDS instance"
-    Value: !GetAtt PermitsDB.Endpoint.Address
+    Description: "Endpoint of the newly created RDS instance"
+    Value: !GetAtt RDSInstance.Endpoint.Address
   PortDB:
-    Description: "Port of the newly created Permits RDS instance"
-    Value: !GetAtt PermitsDB.Endpoint.Port
+    Description: "Port of the newly created RDS instance"
+    Value: !GetAtt RDSInstance.Endpoint.Port
   DataBucket:
-    Description: "S3 Bucket for storing permits data."
+    Description: "S3 Bucket for storing data."
     Value: !Ref DataBucket
