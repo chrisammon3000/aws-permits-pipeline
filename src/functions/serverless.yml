@@ -1,5 +1,5 @@
-# service: aws-permits-pipeline
-service: aws-permits-pipeline-vpc
+service: aws-permits-pipeline
+# service: aws-permits-pipeline-vpc
 
 plugins:
   - serverless-python-requirements
@@ -21,12 +21,10 @@ custom:
   db_name: ${ssm:/permits/db_name}
   db_user: ${ssm:/permits/db_user}
   db_password: ${ssm:/permits/db_password~true}
-  db_master_port: ${cf:${self:custom.cfn_stack}.PortDB}
-  db_master_endpoint: ${cf:${self:custom.cfn_stack}.EndpointDB}  
-  # db_master_port: ${cf:${self:custom.cfn_stack}.MasterPortDB}
-  # db_master_endpoint: ${cf:${self:custom.cfn_stack}.MasterEndpointDB}
-  # db_replica_port: ${cf:${self:custom.cfn_stack}.ReplicaPortDB}
-  # db_replica_endpoint: ${cf:${self:custom.cfn_stack}.ReplicaEndpointDB}
+  db_master_port: ${cf:${self:custom.cfn_stack}.MasterPortDB}
+  db_master_endpoint: ${cf:${self:custom.cfn_stack}.MasterEndpointDB}
+  db_replica_port: ${cf:${self:custom.cfn_stack}.ReplicaPortDB} # VPC only
+  db_replica_endpoint: ${cf:${self:custom.cfn_stack}.ReplicaEndpointDB} # VPC only
   
 provider:
   name: aws

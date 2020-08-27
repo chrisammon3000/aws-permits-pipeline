@@ -132,6 +132,12 @@ Outputs:
   MasterPortDB:
     Description: "Port of the newly created RDS instance"
     Value: !GetAtt RDSMasterInstance.Endpoint.Port
+  ReplicaEndpointDB:
+    Description: "Endpoint of the newly created RDS instance"
+    Value: "No replica available"
+  ReplicaPortDB:
+    Description: "Port of the newly created RDS instance"
+    Value: "No replica available"
   DataBucket:
     Description: "S3 Bucket for storing data."
     Value: !Ref DataBucket
