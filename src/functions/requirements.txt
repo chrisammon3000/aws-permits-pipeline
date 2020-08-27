@@ -1,2 +1,2 @@
-numpy
-psycopg2
+requests
+psycopg2-binary
