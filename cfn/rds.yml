@@ -9,7 +9,7 @@ Parameters:
     Default: 7
   DBInstanceIdentifier:
     Type: String
-    Default: "aws-building-permits-pipeline-db"
+    Default: "db"
   DBEngine:
     Type: String
     Default: "postgres"
@@ -93,10 +93,10 @@ Resources:
     Properties:
       DBInstanceIdentifier: !Join 
         - '-'
-        - - !Ref AppName
+        - - !Ref Stage
+          - !Ref AppName
           - !Ref AppVersion
           - !Ref DBInstanceIdentifier
-          - !Ref AppVersion
       DBName: !Ref DBName
       AssociatedRoles: 
         - FeatureName: s3Import
