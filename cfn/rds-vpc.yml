@@ -261,17 +261,17 @@ Resources:
           - !Ref AWS::AccountId
 Outputs:
   MasterEndpointDB:
-    Description: "Endpoint of the newly created Permits RDS instance"
+    Description: "Endpoint of the newly created Building Permits RDS master instance"
     Value: !GetAtt RDSMasterInstance.Endpoint.Address
   MasterPortDB:
-    Description: "Port of the newly created Permits RDS instance"
+    Description: "Port of the newly created Building Permits RDS master instance"
     Value: !GetAtt RDSMasterInstance.Endpoint.Port
   ReplicaEndpointDB:
-    Description: "Endpoint of the newly created Permits RDS instance"
+    Description: "Endpoint of the newly created Building Permits RDS read replica instance"
     Value: !GetAtt RDSReadReplicaInstance.Endpoint.Address
   ReplicaPortDB:
-    Description: "Port of the newly created Permits RDS instance"
+    Description: "Port of the newly created Building Permits RDS read replica instance"
     Value: !GetAtt RDSReadReplicaInstance.Endpoint.Port
   DataBucket:
-    Description: "S3 Bucket for storing data"
+    Description: "S3 Bucket for storing Building Permits data"
     Value: !Ref DataBucket
