@@ -114,6 +114,8 @@ Resources:
           Value: !Ref AppName
         - Key: Version
           Value: !Ref AppVersion
+        - Key: Name
+          Value: Postgres Master DB
   DataBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -127,17 +129,17 @@ Resources:
           - !Ref AWS::AccountId
 Outputs:
   MasterEndpointDB:
-    Description: "Endpoint of the newly created RDS instance"
+    Description: "Endpoint of the newly created Building Permits RDS master instance"
     Value: !GetAtt RDSMasterInstance.Endpoint.Address
   MasterPortDB:
-    Description: "Port of the newly created RDS instance"
+    Description: "Port of the newly created Building Permits RDS master instance"
     Value: !GetAtt RDSMasterInstance.Endpoint.Port
   ReplicaEndpointDB:
-    Description: "Endpoint of the newly created RDS instance"
+    Description: "Endpoint of the newly created Building Permits RDS read replica instance"
     Value: "No replica available"
   ReplicaPortDB:
-    Description: "Port of the newly created RDS instance"
+    Description: "Port of the newly created Building Permits RDS read replica instance"
     Value: "No replica available"
   DataBucket:
-    Description: "S3 Bucket for storing data."
+    Description: "S3 Bucket for storing Building Permits data"
     Value: !Ref DataBucket

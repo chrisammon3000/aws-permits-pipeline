@@ -58,32 +58,40 @@ git clone \
    ```
    npm install -g serverless
    ```
-3. *(optional)* Edit the file `scripts/set_parameters.sh` to set the parameters for the database name, username and password.
-4. Run the script:
+3. Install serverless-python-requirements plugin:
+   ```
+   cd aws-permits-pipeline
+   npm install --save serverless-python-requirements
+   ```
+4. *(optional)* Edit the file `scripts/set_parameters.sh` to set the parameters for the database name, username and password.
+5. Run the script:
    ```
    bash scripts/set_parameters.sh
    ```
-5. Deploy the RDS stack:
+6. Deploy the RDS only stack:
    ```
-   aws cloudformation deploy --template-file cfn/rds.yml --stack-name aws-building-permits-pipeline-cfn --capabilities CAPABILITY_NAMED_IAM
+   aws cloudformation deploy --template-file cfn/rds.yml --capabilities CAPABILITY_NAMED_IAM --stack-name aws-permits-pipeline-1
    ```
-   Note: the `--stack-name` parameter must match the `cfn_stack` custom variable in the serverless.yml file.
-6. Deploy Serverless stack:
+   Note: the`cfn_stack` custom variable in the serverless.yml file uses the `--stack-name` parameter with the format [stack name]-[version], for example 'aws-permits-pipeline-1'.
+7. Deploy Serverless stack:
    ```
    cd src/functions
    serverless deploy
    ```
-7. Initialize database
-   
-   *Under Development*
 
 ### Initialize the Database
 
-*Under Development*
+   Initialize database by invoking Lambda:
+   ```
+   serverless invoke --function initDatabase --stage dev --region us-east-1 --log
+   ```
+   This also triggers the fetch and load functions automatically. The fetch function is scheduled to run once a day.
 
 ### Running the Pipeline
 
-*Under Development*
+   ```
+   serverless invoke --function fetchData --stage dev --region us-east-1 --log
+   ```
 
 ### Accessing the database
    Open the notebook `0.1-building-permits-aws-pipeline` to run queries on the database and explore the data:
