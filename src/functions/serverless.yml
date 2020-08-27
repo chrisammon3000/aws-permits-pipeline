@@ -14,9 +14,9 @@ custom:
   version: 1
   bucket: ${cf:${self:custom.cfn_stack}.DataBucket}
   s3_raw_folder: "data/raw/"
-  #permits_url: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
-  permits_url: "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj"
-  filename: "titanic"
+  permits_url: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
+  #permits_url: "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj"
+  filename: "permits"
   db_name: ${ssm:/permits/db_name}
   db_user: ${ssm:/permits/db_user}
   db_password: ${ssm:/permits/db_password~true}
