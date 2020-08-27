@@ -1,12 +1,12 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: "Deploys a single PostgreSQL RDS instance, SNS Topic and SNS Subscription."
+Description: "Deploys a PostgreSQL RDS instance and read replica inside a VPC."
 Parameters:
   AppName:
     Type: String
-    Default: "aws-building-permits-pipeline-vpc"
+    Default: "aws-permits-pipeline-vpc"
   AppVersion:
     Type: String
-    Default: 7
+    Default: 1
   VpcCIDR:
     Type: String
     Default: "10.0.0.0/24"
@@ -79,6 +79,8 @@ Resources:
           Value: !Ref AppName
         - Key: Version
           Value: !Ref AppVersion
+        - Key: Name
+          Value: Master Subnet (AZ1)
   DBReplicaSubnet:
     Type: AWS::EC2::Subnet
     Properties:
@@ -91,6 +93,8 @@ Resources:
           Value: !Ref AppName
         - Key: Version
           Value: !Ref AppVersion
+        - Key: Name
+          Value: Replica Subnet (AZ2)
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
@@ -125,6 +129,11 @@ Resources:
     Properties:
       SubnetId: !Ref DBMasterSubnet
       RouteTableId: !Ref PublicRouteTable
+  DBReplicaSubnetRouteTableAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref DBReplicaSubnet
   VpcDefaultSecurityGroupIngress:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
@@ -186,7 +195,7 @@ Resources:
               Service:
                 - rds.amazonaws.com
             Action: sts:AssumeRole
-  RDSInstance:
+  RDSMasterInstance:
     Type: AWS::RDS::DBInstance
     DependsOn: InternetGatewayAttachment
     Properties:
@@ -216,6 +225,28 @@ Resources:
           Value: !Ref AppName
         - Key: Version
           Value: !Ref AppVersion
+        - Key: Name
+          Value: Postgres Master DB
+  RDSReadReplicaInstance:
+    Properties:
+      DBInstanceIdentifier: !Join 
+        - '-'
+        - - !Ref Stage
+          - !Ref AppName
+          - !Ref AppVersion
+          - 'read-replica'
+          - !Ref DBInstanceIdentifier
+      AllocatedStorage: !Ref DBAllocatedStorage
+      DBInstanceClass: !Ref DBInstanceClass
+      SourceDBInstanceIdentifier: !Ref RDSMasterInstance
+      Tags:
+        - Key: App
+          Value: !Ref AppName
+        - Key: Version
+          Value: !Ref AppVersion
+        - Key: Name
+          Value: Postgres Read Replica DB
+    Type: AWS::RDS::DBInstance
   DataBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -230,10 +261,16 @@ Resources:
 Outputs:
   EndpointDB:
     Description: "Endpoint of the newly created Permits RDS instance"
-    Value: !GetAtt RDSInstance.Endpoint.Address
+    Value: !GetAtt RDSMasterInstance.Endpoint.Address
   PortDB:
     Description: "Port of the newly created Permits RDS instance"
-    Value: !GetAtt RDSInstance.Endpoint.Port
+    Value: !GetAtt RDSMasterInstance.Endpoint.Port
+  ReplicaEndpointDB:
+    Description: "Endpoint of the newly created Permits RDS instance"
+    Value: !GetAtt RDSReadReplicaInstance.Endpoint.Address
+  ReplicaPortDB:
+    Description: "Port of the newly created Permits RDS instance"
+    Value: !GetAtt RDSReadReplicaInstance.Endpoint.Port
   DataBucket:
-    Description: "S3 Bucket for storing data."
+    Description: "S3 Bucket for storing data"
     Value: !Ref DataBucket

@@ -1,12 +1,12 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: "Deploys a single PostgreSQL RDS instance."
+Description: "Deploys a single PostgreSQL RDS instance and S3 bucket."
 Parameters:
   AppName:
     Type: String
-    Default: "aws-building-permits-pipeline"
+    Default: "aws-permits-pipeline"
   AppVersion:
     Type: String
-    Default: 7
+    Default: 1
   DBInstanceIdentifier:
     Type: String
     Default: "db"

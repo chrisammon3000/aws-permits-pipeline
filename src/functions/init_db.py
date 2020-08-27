@@ -5,6 +5,7 @@ import psycopg2
 from libs.sql_queries import install_ext_aws_s3, install_ext_postgis, permits_raw_table_create, titanic_table_create
 
 DB_ENDPOINT = os.environ['DB_ENDPOINT']
+DB_REPLICA_ENDPOINT = os.environ['DB_REPLICA_ENDPOINT']
 DB_NAME = os.environ['DB_NAME']
 DB_USER = os.environ['DB_USER']
 DB_PASSWORD = os.environ['DB_PASSWORD']
@@ -27,6 +28,9 @@ def init_db(event, context):
         logger.info(f'Connected to "{DB_NAME}" at "{DB_ENDPOINT}"')
     except Exception as err:
         logger.error(f'Error: "{err}"')
+
+        # try:
+
         return -1
 
     try:

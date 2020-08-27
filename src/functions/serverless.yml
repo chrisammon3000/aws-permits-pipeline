@@ -1,4 +1,5 @@
-service: aws-building-permits-pipeline-cfn
+# service: aws-permits-pipeline
+service: aws-permits-pipeline-vpc
 
 plugins:
   - serverless-python-requirements
