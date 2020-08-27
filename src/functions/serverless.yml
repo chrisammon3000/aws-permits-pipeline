@@ -50,8 +50,6 @@ functions:
     package:
       include:
           - libs/sql_queries.py
-    # layers: 
-    #   - arn:aws:lambda:us-east-1:898466741470:layer:psycopg2-py37:3
     timeout: 30
     memorySize: 128
     environment:
@@ -63,8 +61,6 @@ functions:
   fetchData:
     name: ${self:provider.stage}-${self:custom.cfn_stack}-fetchData
     handler: fetch_data.fetch_data
-    # layers: 
-    #   - arn:aws:lambda:us-east-1:531868584498:layer:requestsLayer-p36-p37-p38:1
     timeout: 200
     memorySize: 3008
     environment:
@@ -80,8 +76,6 @@ functions:
     package:
       include:
           - libs/sql_queries.py
-    # layers:
-    #   - arn:aws:lambda:us-east-1:898466741470:layer:psycopg2-py37:3
     timeout: 120
     memorySize: 128
     environment:
