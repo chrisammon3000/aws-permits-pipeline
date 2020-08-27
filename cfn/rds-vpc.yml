@@ -217,6 +217,7 @@ Resources:
       MasterUsername: !Ref DBUser
       MasterUserPassword: !Ref DBPassword
       PubliclyAccessible: true
+      MultiAZ: true
       VPCSecurityGroups:
         - !GetAtt VPC.DefaultSecurityGroup
       DBSubnetGroupName: !Ref DBSubnetGroup      
@@ -234,11 +235,12 @@ Resources:
         - - !Ref Stage
           - !Ref AppName
           - !Ref AppVersion
-          - 'read-replica'
+          - 'replica'
           - !Ref DBInstanceIdentifier
       AllocatedStorage: !Ref DBAllocatedStorage
       DBInstanceClass: !Ref DBInstanceClass
       SourceDBInstanceIdentifier: !Ref RDSMasterInstance
+      SourceRegion: !Ref AWS::Region
       Tags:
         - Key: App
           Value: !Ref AppName
@@ -259,10 +261,10 @@ Resources:
           - !Ref AWS::Region
           - !Ref AWS::AccountId
 Outputs:
-  EndpointDB:
+  MasterEndpointDB:
     Description: "Endpoint of the newly created Permits RDS instance"
     Value: !GetAtt RDSMasterInstance.Endpoint.Address
-  PortDB:
+  MasterPortDB:
     Description: "Port of the newly created Permits RDS instance"
     Value: !GetAtt RDSMasterInstance.Endpoint.Port
   ReplicaEndpointDB:

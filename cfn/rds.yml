@@ -88,7 +88,7 @@ Resources:
               Service:
                 - rds.amazonaws.com
             Action: sts:AssumeRole
-  RDSInstance:
+  RDSMasterInstance:
     Type: AWS::RDS::DBInstance
     Properties:
       DBInstanceIdentifier: !Join 
@@ -126,12 +126,12 @@ Resources:
           - !Ref AWS::Region
           - !Ref AWS::AccountId
 Outputs:
-  EndpointDB:
+  MasterEndpointDB:
     Description: "Endpoint of the newly created RDS instance"
-    Value: !GetAtt RDSInstance.Endpoint.Address
-  PortDB:
+    Value: !GetAtt RDSMasterInstance.Endpoint.Address
+  MasterPortDB:
     Description: "Port of the newly created RDS instance"
-    Value: !GetAtt RDSInstance.Endpoint.Port
+    Value: !GetAtt RDSMasterInstance.Endpoint.Port
   DataBucket:
     Description: "S3 Bucket for storing data."
     Value: !Ref DataBucket

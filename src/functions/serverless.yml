@@ -11,7 +11,7 @@ custom:
   pythonRequirements:
     dockerizePip: non-linux
   cfn_stack: ${self:service.name}-${self:custom.version}
-  version: 7
+  version: 1
   bucket: ${cf:${self:custom.cfn_stack}.DataBucket}
   s3_raw_folder: "data/raw/"
   #permits_url: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
@@ -20,8 +20,12 @@ custom:
   db_name: ${ssm:/permits/db_name}
   db_user: ${ssm:/permits/db_user}
   db_password: ${ssm:/permits/db_password~true}
-  db_port: ${cf:${self:custom.cfn_stack}.PortDB}
-  db_endpoint: ${cf:${self:custom.cfn_stack}.EndpointDB}
+  db_master_port: ${cf:${self:custom.cfn_stack}.PortDB}
+  db_master_endpoint: ${cf:${self:custom.cfn_stack}.EndpointDB}  
+  # db_master_port: ${cf:${self:custom.cfn_stack}.MasterPortDB}
+  # db_master_endpoint: ${cf:${self:custom.cfn_stack}.MasterEndpointDB}
+  # db_replica_port: ${cf:${self:custom.cfn_stack}.ReplicaPortDB}
+  # db_replica_endpoint: ${cf:${self:custom.cfn_stack}.ReplicaEndpointDB}
   
 provider:
   name: aws
@@ -53,8 +57,8 @@ functions:
       DB_NAME: ${self:custom.db_name}
       DB_USER: ${self:custom.db_user}
       DB_PASSWORD: ${self:custom.db_password}
-      DB_PORT: ${self:custom.db_port}
-      DB_ENDPOINT: ${self:custom.db_endpoint}
+      DB_PORT: ${self:custom.db_master_port}
+      DB_ENDPOINT: ${self:custom.db_master_endpoint}
   fetchData:
     name: ${self:provider.stage}-${self:custom.cfn_stack}-fetchData
     handler: fetch_data.fetch_data
@@ -83,8 +87,8 @@ functions:
       DB_NAME: ${self:custom.db_name}
       DB_USER: ${self:custom.db_user}
       DB_PASSWORD: ${self:custom.db_password}
-      DB_PORT: ${self:custom.db_port}
-      DB_ENDPOINT: ${self:custom.db_endpoint}
+      DB_PORT: ${self:custom.db_master_port}
+      DB_ENDPOINT: ${self:custom.db_master_endpoint}
       S3_BUCKET: ${self:custom.bucket}
     events:
       - s3:
