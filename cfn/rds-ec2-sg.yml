@@ -1,15 +1,15 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: "Deploys a single PostgreSQL RDS instance."
+Description: "Deploys a single PostgreSQL RDS instance with EC2 security groups."
 Parameters:
   AppName:
     Type: String
-    Default: "aws-building-permits-pipeline"
+    Default: "rds-ec2-sg-test"
   AppVersion:
     Type: String
-    Default: 7
+    Default: 1
   DBInstanceIdentifier:
     Type: String
-    Default: "aws-building-permits-pipeline-db"
+    Default: "db"
   DBEngine:
     Type: String
     Default: "postgres"
@@ -42,52 +42,6 @@ Parameters:
       - dev
       - prod
 Resources:
-  RDSS3ImportPolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: !Join
-        - '-'
-        - - !Ref Stage
-          - !Ref AppName
-          - !Ref AppVersion
-          - rds-s3-import-policy
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement: 
-          - Sid: s3import
-            Action: 
-              - s3:GetObject
-              - s3:ListBucket
-            Effect: Allow
-            Resource: 
-              - !Join 
-                - ''
-                - - 'arn:aws:s3:::'
-                  - !Ref DataBucket
-              - !Join 
-                - ''
-                - - 'arn:aws:s3:::'
-                  - !Ref DataBucket
-                  - '/*'
-      Roles: 
-        - !Ref RDSS3ImportRole
-  RDSS3ImportRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: !Join
-        - '-'
-        - - !Ref Stage
-          - !Ref AppName
-          - !Ref AppVersion
-          - rds-s3-import-role
-      AssumeRolePolicyDocument: 
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal: 
-              Service:
-                - rds.amazonaws.com
-            Action: sts:AssumeRole
   RDSInstance:
     Type: AWS::RDS::DBInstance
     Properties:
@@ -114,17 +68,6 @@ Resources:
           Value: !Ref AppName
         - Key: Version
           Value: !Ref AppVersion
-  DataBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Join 
-        - '-'
-        - - !Ref Stage
-          - !Ref AppName
-          - !Ref AppVersion
-          - 'data'
-          - !Ref AWS::Region
-          - !Ref AWS::AccountId
 Outputs:
   EndpointDB:
     Description: "Endpoint of the newly created RDS instance"
@@ -132,6 +75,3 @@ Outputs:
   PortDB:
     Description: "Port of the newly created RDS instance"
     Value: !GetAtt RDSInstance.Endpoint.Port
-  DataBucket:
-    Description: "S3 Bucket for storing data."
-    Value: !Ref DataBucket
