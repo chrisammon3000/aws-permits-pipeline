@@ -35,25 +35,25 @@ The pipeline is built on these frameworks and platforms:
 
 ## Getting Started
 
-Clone this repo:
-```
-git clone \
-    --branch master --single-branch --depth 1 --no-tags \
-    https://github.com/abk7777/building-permits-aws-pipeline.git
-```
-
 ### Prerequisites
 * [awscli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
 * [Credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) for AWS CLI
 * [Serverless](https://www.serverless.com/framework/docs/getting-started/) framework
-* Lambda Layers: *Under Development*
+* [Docker](https://docs.docker.com/get-docker/)
 
 ### Setting up Environment
-1. Install and configure awscli. Anaconda users can run:
+1. Clone this repo:
+   ```
+   git clone \
+       --branch master --single-branch --depth 1 --no-tags \
+       https://github.com/abk7777/building-permits-aws-pipeline.git
+   ```
+2. Install and configure awscli. Anaconda users can run:
    ```
    conda install -c conda-forge awscli
    aws configure
    ```
+
 2. Install Serverless framework (using npm):
    ```
    npm install -g serverless
@@ -80,20 +80,20 @@ git clone \
    ```
 
 ### Initialize the Database
-
-   Initialize database by invoking Lambda:
    ```
    serverless invoke --function initDatabase --stage dev --region us-east-1 --log
    ```
-   This also triggers the fetch and load functions automatically. The fetch function is scheduled to run once a day.
+   This also triggers the fetch and load functions automatically.
 
 ### Running the Pipeline
-
+   The fetchData and loadData Lambda functions are scheduled to run once a day to fetch and load fresh data.
    ```
    serverless invoke --function fetchData --stage dev --region us-east-1 --log
    ```
 
 ### Accessing the database
+   *Under development*
+
    Open the notebook `0.1-building-permits-aws-pipeline` to run queries on the database and explore the data:
    ```
    cd notebooks
