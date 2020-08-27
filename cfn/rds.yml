@@ -3,10 +3,13 @@ Description: "Deploys a single PostgreSQL RDS instance."
 Parameters:
   AppName:
     Type: String
-    Default: "aws-building-permits-pipeline-4"
+    Default: "aws-building-permits-pipeline"
+  AppVersion:
+    Type: String
+    Default: 7
   DBInstanceIdentifier:
     Type: String
-    Default: "permits-dev-4"
+    Default: "aws-building-permits-pipeline-db"
   DBEngine:
     Type: String
     Default: "postgres"
@@ -32,17 +35,22 @@ Parameters:
     Type: String
     Default: '{{resolve:ssm-secure:/permits/db_password:1}}'
     NoEcho: True
-  BucketName: 
+  Stage:
     Type: String
-    Default: Fn::Join
-      - ''
-      - - !Ref AppName
-        - '-data'
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
 Resources:
   RDSS3ImportPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: rds-s3-import-policy
+      PolicyName: !Join
+        - '-'
+        - - !Ref Stage
+          - !Ref AppName
+          - !Ref AppVersion
+          - rds-s3-import-policy
       PolicyDocument:
         Version: "2012-10-17"
         Statement: 
@@ -52,13 +60,26 @@ Resources:
               - s3:ListBucket
             Effect: Allow
             Resource: 
-              - arn:aws:s3:::aws-permits-analysis
-              - arn:aws:s3:::aws-permits-analysis/*
+              - !Join 
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref DataBucket
+              - !Join 
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref DataBucket
+                  - '/*'
       Roles: 
         - !Ref RDSS3ImportRole
   RDSS3ImportRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: !Join
+        - '-'
+        - - !Ref Stage
+          - !Ref AppName
+          - !Ref AppVersion
+          - rds-s3-import-role
       AssumeRolePolicyDocument: 
         Version: "2012-10-17"
         Statement:
@@ -70,7 +91,10 @@ Resources:
   PermitsDB:
     Type: AWS::RDS::DBInstance
     Properties:
-      DBInstanceIdentifier: !Ref DBInstanceIdentifier
+      DBInstanceIdentifier: !Join 
+        - '-'
+        - - !Ref DBInstanceIdentifier
+          - !Ref AppVersion
       DBName: !Ref DBName
       AssociatedRoles: 
         - FeatureName: s3Import
@@ -86,10 +110,19 @@ Resources:
       Tags:
         - Key: App
           Value: !Ref AppName
+        - Key: Version
+          Value: !Ref AppVersion
   DataBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref BucketName
+      BucketName: !Join 
+        - '-'
+        - - !Ref Stage
+          - !Ref AppName
+          - !Ref AppVersion
+          - 'data'
+          - !Ref AWS::Region
+          - !Ref AWS::AccountId
 Outputs:
   EndpointDB:
     Description: "Endpoint of the newly created Permits RDS instance"

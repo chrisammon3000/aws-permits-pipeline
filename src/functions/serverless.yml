@@ -1,4 +1,4 @@
-service: aws-building-permits-pipeline
+service: aws-building-permits-pipeline-cfn
 
 plugins:
   - serverless-python-requirements
@@ -9,7 +9,8 @@ package:
 custom:
   pythonRequirements:
     dockerizePip: non-linux
-  cfn_stack: aws-building-permits-pipeline-cfn-4
+  cfn_stack: ${self:service.name}-${self:custom.version}
+  version: 7
   bucket: ${cf:${self:custom.cfn_stack}.DataBucket}
   s3_raw_folder: "data/raw/"
   #permits_url: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
@@ -19,7 +20,7 @@ custom:
   db_user: ${ssm:/permits/db_user}
   db_password: ${ssm:/permits/db_password~true}
   db_port: ${cf:${self:custom.cfn_stack}.PortDB}
-  db_endpoint: ${cf:${self:custom.cfn_stack}.EndpointDB} # remember to add "-cfn" to stack name
+  db_endpoint: ${cf:${self:custom.cfn_stack}.EndpointDB}
   
 provider:
   name: aws
@@ -38,6 +39,7 @@ provider:
       Resource: arn:aws:s3:::${self:custom.bucket}/*
 functions:
   initDatabase:
+    name: ${self:provider.stage}-${self:custom.cfn_stack}-initDatabase
     handler: init_db.init_db
     package:
       include:
@@ -53,6 +55,7 @@ functions:
       DB_PORT: ${self:custom.db_port}
       DB_ENDPOINT: ${self:custom.db_endpoint}
   fetchData:
+    name: ${self:provider.stage}-${self:custom.cfn_stack}-fetchData
     handler: fetch_data.fetch_data
     layers: 
       - arn:aws:lambda:us-east-1:531868584498:layer:requestsLayer-p36-p37-p38:1
@@ -66,6 +69,7 @@ functions:
     events:
       - schedule: rate(24 hours)
   loadData:
+    name: ${self:provider.stage}-${self:custom.cfn_stack}-loadData
     handler: load_data.load_data
     package:
       include:
@@ -80,6 +84,7 @@ functions:
       DB_PASSWORD: ${self:custom.db_password}
       DB_PORT: ${self:custom.db_port}
       DB_ENDPOINT: ${self:custom.db_endpoint}
+      S3_BUCKET: ${self:custom.bucket}
     events:
       - s3:
           bucket: ${self:custom.bucket}
@@ -87,3 +92,4 @@ functions:
           rules:
             - prefix: ${self:custom.s3_raw_folder}
             - suffix: .csv
+          existing: true
