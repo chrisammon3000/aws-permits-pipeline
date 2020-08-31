@@ -22,17 +22,18 @@ https://data.lacity.org/api/views/yv23-pmwf/rows.csv?accessType=DOWNLOAD
 
 ## Built With
 The pipeline is built on these frameworks and platforms:
-* AWS: Lambda, S3, RDS (PostgreSQL with PostGIS extension), Parameter Store
+* AWS: Lambda, S3, RDS PostgreSQL, Parameter Store
 * Serverless framework
 * Python
-* [psycopg2](https://pypi.org/project/psycopg2/)
+* psycopg2
+* PostGIS
 * US Census Bureau [TIGER](https://en.wikipedia.org/wiki/Topologically_Integrated_Geographic_Encoding_and_Referencing) data for geocoding (*to be added*)
 
 ## Getting Started
 
 ### Prerequisites
-* [awscli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
-* [Credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) for AWS CLI
+The following should be installed:
+* [awscli](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) and [credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)
 * [Serverless](https://www.serverless.com/framework/docs/getting-started/) framework
 * [Docker](https://docs.docker.com/get-docker/)
 
@@ -43,36 +44,32 @@ The pipeline is built on these frameworks and platforms:
        --branch master --single-branch --depth 1 --no-tags \
        https://github.com/abk7777/building-permits-aws-pipeline.git
    ```
-2. Install and configure awscli. Anaconda users can run:
-   ```
-   conda install -c conda-forge awscli
-   aws configure
-   ```
 
-2. Install Serverless framework (using npm):
-   ```
-   npm install -g serverless
-   ```
-3. Install serverless-python-requirements plugin:
+2. Install serverless-python-requirements plugin:
    ```
    cd aws-permits-pipeline
    npm install --save serverless-python-requirements
    ```
-4. *(optional)* Edit the file `scripts/set_parameters.sh` to set the parameters for the database name, username and password.
-5. Run the script:
+3. Run the script:
    ```
    bash scripts/set_parameters.sh
    ```
-
+   *(optional)* Edit the file `scripts/set_parameters.sh` to set the parameters for the database name, username and password.
 ### Deploy AWS Infrastructure
-1. Deploy the RDS only stack:
+1. Deploy the RDS stack with or without VPC:
    
    ```
+   # RDS only
    aws cloudformation deploy --template-file cfn/rds.yml --capabilities CAPABILITY_NAMED_IAM --stack-name aws-permits-pipeline-1
    ```
-   Note: the `cfn_stack` custom variable in the serverless.yml file uses the `--stack-name` parameter with the format [stack name]-[version], for example *'aws-permits-pipeline-1'*.
+   ```
+   # RDS with VPC
+   aws cloudformation deploy --template-file cfn/rds-vpc.yml --capabilities CAPABILITY_NAMED_IAM --stack-name aws-permits-pipeline-1
+   ```
 
-2. Deploy Lambda functions through Serverless stack:
+   Note: The serverlless.yml file contains a custom variable `cfn_stack` which references the CloudFormation `--stack-name` parameter and uses the format [**stack name**]-[**version**], for example *'aws-permits-pipeline-1'*. The version value should match in both the CloudFormation and Serverless .yml files.
+
+2. Deploy Lambda functions with Serverless framework:
    ```
    cd src/functions
    serverless deploy
@@ -82,7 +79,7 @@ The pipeline is built on these frameworks and platforms:
    ```
    serverless invoke --function initDatabase --stage dev --region us-east-1 --log
    ```
-   This also triggers the fetch and load functions automatically.
+   This installs the Postgres extensions for S3 import and PostGIS and creates a table `permits_raw`.
 
 ### Running the Pipeline
    The fetchData and loadData Lambda functions are scheduled to run once a day to fetch and load fresh data.
@@ -91,7 +88,7 @@ The pipeline is built on these frameworks and platforms:
    ```
 
 ### Accessing the database
-   *Under development*
+   
 
    Open the notebook `0.1-building-permits-aws-pipeline` to run queries on the database and explore the data:
    ```

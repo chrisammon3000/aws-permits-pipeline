@@ -1,5 +1,4 @@
 service: aws-permits-pipeline
-# service: aws-permits-pipeline-vpc # for VPC 
 
 plugins:
   - serverless-python-requirements
@@ -12,7 +11,7 @@ custom:
     dockerizePip: non-linux
     dockerFile: ./Dockerfile
   cfn_stack: ${self:service.name}-${self:custom.version}
-  version: 1
+  version: 2
   bucket: ${cf:${self:custom.cfn_stack}.DataBucket}
   s3_raw_folder: "data/raw/"
   permits_url: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"

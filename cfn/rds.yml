@@ -6,7 +6,7 @@ Parameters:
     Default: "aws-permits-pipeline"
   AppVersion:
     Type: String
-    Default: 1
+    Default: 2
   DBInstanceIdentifier:
     Type: String
     Default: "db"
