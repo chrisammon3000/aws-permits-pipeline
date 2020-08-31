@@ -60,6 +60,7 @@ def init_db(event, context):
         except Exception as err:
             logger.error(f'Unsuccessful query, Error: {err}')
 
+        # # DUMMY DATA
         # # titanic data for testing
         # # install aws_s3 extension
         # logger.info(f'Executing query: "aws_s3 extension"')

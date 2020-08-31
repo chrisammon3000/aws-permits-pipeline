@@ -10,8 +10,6 @@ aws-building-permits-pipeline
 
 An ETL pipeline for construction permits data from the [Los Angeles Open Data Portal](https://data.lacity.org/) hosted on AWS using  *Lambda*, *PostgreSQL RDS* with PostGIS, and *S3*. Running the pipeline fetches the data from the internet and loads it into an RDS instance running PostgreSQL/PostGIS.
 
-*Please note:* The stack is using dummy data at the moment, and will be updated soon. See most recent issues for info.
-
 ## Background
 Cited from [Building and Safety Permit Information](https://data.lacity.org/A-Prosperous-City/Building-and-Safety-Permit-Information-Old/yv23-pmwf):<br>
 >*"The Department of Building and Safety issues permits for the construction, remodeling, and repair of buildings and structures in the City of Los Angeles. Permits are categorized into building permits, electrical permits, and mechanical permits"*
@@ -24,14 +22,11 @@ https://data.lacity.org/api/views/yv23-pmwf/rows.csv?accessType=DOWNLOAD
 
 ## Built With
 The pipeline is built on these frameworks and platforms:
-* Lambda
-* S3
-* RDS (PostgreSQL with PostGIS extension)
-* AWS Parameter Store
+* AWS: Lambda, S3, RDS (PostgreSQL with PostGIS extension), Parameter Store
 * Serverless framework
 * Python
 * [psycopg2](https://pypi.org/project/psycopg2/)
-* US Census Bureau [TIGER](https://en.wikipedia.org/wiki/Topologically_Integrated_Geographic_Encoding_and_Referencing) data for geocoding
+* US Census Bureau [TIGER](https://en.wikipedia.org/wiki/Topologically_Integrated_Geographic_Encoding_and_Referencing) data for geocoding (*to be added*)
 
 ## Getting Started
 
@@ -68,12 +63,16 @@ The pipeline is built on these frameworks and platforms:
    ```
    bash scripts/set_parameters.sh
    ```
-6. Deploy the RDS only stack:
+
+### Deploy AWS Infrastructure
+1. Deploy the RDS only stack:
+   
    ```
    aws cloudformation deploy --template-file cfn/rds.yml --capabilities CAPABILITY_NAMED_IAM --stack-name aws-permits-pipeline-1
    ```
-   Note: the`cfn_stack` custom variable in the serverless.yml file uses the `--stack-name` parameter with the format [stack name]-[version], for example 'aws-permits-pipeline-1'.
-7. Deploy Serverless stack:
+   Note: the `cfn_stack` custom variable in the serverless.yml file uses the `--stack-name` parameter with the format [stack name]-[version], for example *'aws-permits-pipeline-1'*.
+
+2. Deploy Lambda functions through Serverless stack:
    ```
    cd src/functions
    serverless deploy
