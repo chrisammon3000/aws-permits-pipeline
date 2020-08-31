@@ -60,27 +60,6 @@ def init_db(event, context):
         except Exception as err:
             logger.error(f'Unsuccessful query, Error: {err}')
 
-        # # DUMMY DATA
-        # # titanic data for testing
-        # # install aws_s3 extension
-        # logger.info(f'Executing query: "aws_s3 extension"')
-        # logger.debug(install_ext_aws_s3)
-        # try:
-        #     cur.execute(install_ext_aws_s3)
-        #     logger.info('Query successful')
-            
-        # except Exception as err:
-        #     logger.error(f'Unsuccessful query, Error: {err}')
-
-        # # create titanic_data table
-        # logger.info(f'Executing query: "CREATE TABLE titanic_data"')
-        # logger.debug(titanic_table_create.format(DB_NAME=DB_NAME,DB_USER=DB_USER))
-        # try:
-        #     cur.execute(titanic_table_create.format(DB_NAME=DB_NAME,DB_USER=DB_USER))
-        #     logger.info('Query successful')
-        # except Exception as err:
-        #     logger.error(f'Unsuccessful query, Error: {err}')
-
         conn.commit()
         cur.close()
 

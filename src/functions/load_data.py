@@ -34,16 +34,10 @@ def load_data(event, context):
         
     logger.info(f'Executing query: "COPY"')
     logger.debug(permits_raw_update.format(S3_BUCKET=S3_BUCKET, FILE=file))
-    # logger.debug(titanic_data_update.format(S3_BUCKET=S3_BUCKET, FILE=file))
     try:
         # permits data
         cur.execute(permits_raw_update.format(S3_BUCKET=S3_BUCKET, FILE=file))
         logger.info(f'Query successful')
-
-        # # titanic data for testing
-        # # Will need function to determine S3 bucket region
-        # cur.execute(titanic_data_update.format(S3_BUCKET=S3_BUCKET, FILE=file))
-        # logger.info(f'Query successful')
 
         conn.commit()
         cur.close()

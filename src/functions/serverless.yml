@@ -1,5 +1,5 @@
 service: aws-permits-pipeline
-# service: aws-permits-pipeline-vpc
+# service: aws-permits-pipeline-vpc # for VPC 
 
 plugins:
   - serverless-python-requirements
@@ -16,7 +16,6 @@ custom:
   bucket: ${cf:${self:custom.cfn_stack}.DataBucket}
   s3_raw_folder: "data/raw/"
   permits_url: "https://data.lacity.org/api/views/yv23-pmwf/rows.csv"
-  #permits_url: "https://query.data.world/s/3jh2lg45et7dhrpolk4in4ye24mnaj" # dummy data
   filename: "permits"
   db_name: ${ssm:/permits/db_name}
   db_user: ${ssm:/permits/db_user}
