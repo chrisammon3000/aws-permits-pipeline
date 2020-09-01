@@ -4,9 +4,6 @@ Parameters:
   AppName:
     Type: String
     Default: "aws-permits-pipeline"
-  AppVersion:
-    Type: String
-    Default: 2
   DBInstanceIdentifier:
     Type: String
     Default: "db"
@@ -49,7 +46,6 @@ Resources:
         - '-'
         - - !Ref Stage
           - !Ref AppName
-          - !Ref AppVersion
           - rds-s3-import-policy
       PolicyDocument:
         Version: "2012-10-17"
@@ -78,7 +74,6 @@ Resources:
         - '-'
         - - !Ref Stage
           - !Ref AppName
-          - !Ref AppVersion
           - rds-s3-import-role
       AssumeRolePolicyDocument: 
         Version: "2012-10-17"
@@ -95,7 +90,6 @@ Resources:
         - '-'
         - - !Ref Stage
           - !Ref AppName
-          - !Ref AppVersion
           - !Ref DBInstanceIdentifier
       DBName: !Ref DBName
       AssociatedRoles: 
@@ -112,8 +106,6 @@ Resources:
       Tags:
         - Key: App
           Value: !Ref AppName
-        - Key: Version
-          Value: !Ref AppVersion
         - Key: Name
           Value: Postgres Master DB
   DataBucket:
@@ -123,7 +115,6 @@ Resources:
         - '-'
         - - !Ref Stage
           - !Ref AppName
-          - !Ref AppVersion
           - 'data'
           - !Ref AWS::Region
           - !Ref AWS::AccountId
@@ -146,6 +137,3 @@ Outputs:
   AppName:
     Description: "App name"
     Value: !Ref AppName 
-  AppVersion:
-    Description: "App version"
-    Value: !Ref AppVersion

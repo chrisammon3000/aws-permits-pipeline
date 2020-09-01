@@ -5,7 +5,7 @@
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-aws-building-permits-pipeline
+aws-permits-pipeline
 ==============================
 
 An ETL pipeline for construction permits data from the [Los Angeles Open Data Portal](https://data.lacity.org/) hosted on AWS using  *Lambda*, *RDS PostgreSQL*, and *S3*. Once deployed the pipeline fetches fresh data once a day from the internet and loads it into an RDS instance running PostgreSQL/PostGIS. 
@@ -25,6 +25,7 @@ https://data.lacity.org/api/views/yv23-pmwf/rows.csv?accessType=DOWNLOAD
 ## Built With
 The pipeline is built on these frameworks and platforms:
 * AWS: Lambda, S3, RDS PostgreSQL, Parameter Store
+* CloudFormation
 * Serverless framework
 * Python
 * psycopg2
@@ -48,7 +49,7 @@ The following should be installed:
 
 2. Install serverless-python-requirements plugin:
    ```
-   cd aws-permits-pipeline
+   cd aws-permits-pipeline &&
    npm install --save serverless-python-requirements
    ```
 3. Run the script:
@@ -56,31 +57,31 @@ The following should be installed:
    bash scripts/set_parameters.sh
    ```
    *(optional)* Edit the file `scripts/set_parameters.sh` to set your own parameters for the database name, username and password.
+
 ### Deploy AWS Infrastructure
-These instructions will deploy a stack named `aws-permits-pipeline-1` using AWS CloudFormation:
-1. Deploy the RDS stack with or without VPC:
+These instructions will deploy a stack named `aws-permits-pipeline` or `aws-permits-pipeline-vpc` using AWS CloudFormation. Note that the `--stack-name` parameter must match the `service` variable in `serverless.yml` so that Serverless can import the CloudFormation output values:
+
+1. Deploy the RDS stack with or without VPC & read replica:
    
    ```
-   # RDS only
+   # RDS only (deploys fastest)
    aws --region us-east-1 cloudformation deploy \
    --template-file cfn/rds.yml \
    --capabilities CAPABILITY_NAMED_IAM \
-   --stack-name aws-permits-pipeline-1
+   --stack-name aws-permits-pipeline
    ```
    ```
-   # RDS with VPC
+   # RDS with VPC & read replica
    aws --region us-east-1 cloudformation deploy \
    --template-file cfn/rds-vpc.yml \
    --capabilities CAPABILITY_NAMED_IAM \
-   --stack-name aws-permits-pipeline-vpc-1
+   --stack-name aws-permits-pipeline-vpc
    ```
-   If deploying without the VPC you will need to update the default VPC's security group to allow connections on port 5432. This can be done through the AWS RDS console.
-
-   *Note*: The `serverless.yml` file contains a custom variable `cfn_stack` which references the CloudFormation `--stack-name` parameter and uses the format `[stack name]-[version]`, for example `aws-permits-pipeline-1`. The version value should match in the `rds.yml`/`rds-vpc.yml` and `serverless.yml` files.
+   If deploying RDS only without the VPC you will need to update the default VPC's security group to allow connections on port 5432. This can be done through the AWS RDS and EC2 console. Deploying RDS with VPC can take a while since it provisions two instances instead of just one.
 
 2. Deploy Lambda functions with Serverless framework:
    ```
-   cd src/functions
+   cd src/functions &&
    serverless deploy
    ```
 
@@ -103,24 +104,22 @@ These instructions will deploy a stack named `aws-permits-pipeline-1` using AWS 
    ```
 
 ### Accessing the database
-Once the instance is running any SQL client can access the database on port 5432 using the parameters specified in `set_parameters.sh`. To retrieve the endpoint:
+Once the instance is running any SQL client such as `psql` can access the database on port 5432 using the parameters specified in `set_parameters.sh`. To retrieve the endpoint:
    
    ```
    aws cloudformation describe-stacks \
-   --stack-name aws-permits-pipeline-1 \
+   --stack-name aws-permits-pipeline \
    --query "Stacks[0].Outputs[?OutputKey=='MasterEndpointDB'].OutputValue" \
    --output text
    ```
 
-   1. Open the notebook `0.1-permits-eda` to run queries on the database and explore the data:
-      ```
-      cd notebooks
-      jupyter notebook
-      ```
+   Using `psql`:
+   ```
+   psql -h <MasterEndpointDB> -U postgres -p 5432 -d permitsDB
+   ```
 
 ### Cleaning up
 1. Delete the Serverless stack:
-
    ```
    serverless remove
    ```
@@ -128,7 +127,7 @@ Once the instance is running any SQL client can access the database on port 5432
 2. Get the S3 data bucket name:
    ```
    aws cloudformation describe-stacks \
-   --stack-name aws-permits-pipeline-1 \
+   --stack-name aws-permits-pipeline \
    --query "Stacks[0].Outputs[?OutputKey=='DataBucket'].OutputValue" \
    --output text
    ```
@@ -140,7 +139,7 @@ Once the instance is running any SQL client can access the database on port 5432
 4. Delete the CloudFormation stack:
    ```
    aws cloudformation delete-stack \
-   --stack-name aws-permits-pipeline-1
+   --stack-name aws-permits-pipeline
    ```
    
 ## Contributors
