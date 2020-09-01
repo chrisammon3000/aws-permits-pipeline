@@ -57,6 +57,7 @@ The following should be installed:
    bash scripts/set_parameters.sh
    ```
    *(optional)* Edit the file `scripts/set_parameters.sh` to set your own parameters for the database name, username and password.
+
 ### Deploy AWS Infrastructure
 These instructions will deploy a stack named `aws-permits-pipeline` or `aws-permits-pipeline-vpc` using AWS CloudFormation. Note that the `--stack-name` parameter must match the `service` variable in `serverless.yml` so that Serverless can import the CloudFormation output values:
 
@@ -110,6 +111,11 @@ Once the instance is running any SQL client such as `psql` can access the databa
    --stack-name aws-permits-pipeline \
    --query "Stacks[0].Outputs[?OutputKey=='MasterEndpointDB'].OutputValue" \
    --output text
+   ```
+
+   Using `psql`:
+   ```
+   psql -h <MasterEndpointDB> -U postgres permitsDB
    ```
 
 ### Cleaning up
