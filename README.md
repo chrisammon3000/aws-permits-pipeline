@@ -60,23 +60,23 @@ The following should be installed:
 ### Deploy AWS Infrastructure
 These instructions will deploy a stack named `aws-permits-pipeline` or `aws-permits-pipeline-vpc` using AWS CloudFormation. Note that the `--stack-name` parameter must match the `service` variable in `serverless.yml` so that Serverless can import the CloudFormation output values:
 
-1. Deploy the RDS stack with or without VPC:
+1. Deploy the RDS stack with or without VPC & read replica:
    
    ```
-   # RDS only
+   # RDS only (deploys fastest)
    aws --region us-east-1 cloudformation deploy \
    --template-file cfn/rds.yml \
    --capabilities CAPABILITY_NAMED_IAM \
    --stack-name aws-permits-pipeline
    ```
    ```
-   # RDS with VPC
+   # RDS with VPC & read replica
    aws --region us-east-1 cloudformation deploy \
    --template-file cfn/rds-vpc.yml \
    --capabilities CAPABILITY_NAMED_IAM \
    --stack-name aws-permits-pipeline-vpc
    ```
-   If deploying RDS only without the VPC you will need to update the default VPC's security group to allow connections on port 5432. This can be done through the AWS RDS console. Deploying RDS with VPC can take a while since it provisions two instances instead of just one.
+   If deploying RDS only without the VPC you will need to update the default VPC's security group to allow connections on port 5432. This can be done through the AWS RDS and EC2 console. Deploying RDS with VPC can take a while since it provisions two instances instead of just one.
 
 2. Deploy Lambda functions with Serverless framework:
    ```
