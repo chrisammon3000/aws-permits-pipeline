@@ -1,5 +1,5 @@
 service: aws-permits-pipeline
-# service: aws-permits-pipeline-vpc
+# service: aws-permits-pipeline-vpc # When deploying with VPC
 
 plugins:
   - serverless-python-requirements

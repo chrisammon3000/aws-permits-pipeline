@@ -5,7 +5,7 @@
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-aws-building-permits-pipeline
+aws-permits-pipeline
 ==============================
 
 An ETL pipeline for construction permits data from the [Los Angeles Open Data Portal](https://data.lacity.org/) hosted on AWS using  *Lambda*, *RDS PostgreSQL*, and *S3*. Once deployed the pipeline fetches fresh data once a day from the internet and loads it into an RDS instance running PostgreSQL/PostGIS. 
@@ -57,7 +57,8 @@ The following should be installed:
    ```
    *(optional)* Edit the file `scripts/set_parameters.sh` to set your own parameters for the database name, username and password.
 ### Deploy AWS Infrastructure
-These instructions will deploy a stack named `aws-permits-pipeline-1` using AWS CloudFormation:
+These instructions will deploy a stack named `aws-permits-pipeline` or `aws-permits-pipeline-vpc` using AWS CloudFormation. Note that the `--stack-name` parameter must match the `service` variable in `serverless.yml` so that Serverless can import the CloudFormation output values:
+
 1. Deploy the RDS stack with or without VPC:
    
    ```
@@ -65,18 +66,16 @@ These instructions will deploy a stack named `aws-permits-pipeline-1` using AWS 
    aws --region us-east-1 cloudformation deploy \
    --template-file cfn/rds.yml \
    --capabilities CAPABILITY_NAMED_IAM \
-   --stack-name aws-permits-pipeline-1
+   --stack-name aws-permits-pipeline
    ```
    ```
    # RDS with VPC
    aws --region us-east-1 cloudformation deploy \
    --template-file cfn/rds-vpc.yml \
    --capabilities CAPABILITY_NAMED_IAM \
-   --stack-name aws-permits-pipeline-vpc-1
+   --stack-name aws-permits-pipeline-vpc
    ```
-   If deploying without the VPC you will need to update the default VPC's security group to allow connections on port 5432. This can be done through the AWS RDS console.
-
-   *Note*: The `serverless.yml` file contains a custom variable `cfn_stack` which references the CloudFormation `--stack-name` parameter and uses the format `[stack name]-[version]`, for example `aws-permits-pipeline-1`. The version value should match in the `rds.yml`/`rds-vpc.yml` and `serverless.yml` files.
+   If deploying RDS only without the VPC you will need to update the default VPC's security group to allow connections on port 5432. This can be done through the AWS RDS console. Deploying RDS with VPC can take a while since it provisions two instances instead of just one.
 
 2. Deploy Lambda functions with Serverless framework:
    ```
@@ -107,7 +106,7 @@ Once the instance is running any SQL client can access the database on port 5432
    
    ```
    aws cloudformation describe-stacks \
-   --stack-name aws-permits-pipeline-1 \
+   --stack-name aws-permits-pipeline \
    --query "Stacks[0].Outputs[?OutputKey=='MasterEndpointDB'].OutputValue" \
    --output text
    ```
@@ -122,7 +121,7 @@ Once the instance is running any SQL client can access the database on port 5432
 1. Get the S3 bucket name:
    ```
    aws cloudformation describe-stacks \
-   --stack-name aws-permits-pipeline-1 \
+   --stack-name aws-permits-pipeline \
    --query "Stacks[0].Outputs[?OutputKey=='DataBucket'].OutputValue" \
    --output text
    ```
@@ -134,7 +133,7 @@ Once the instance is running any SQL client can access the database on port 5432
 3. Delete the CloudFormation stack:
    ```
    aws cloudformation delete-stack \
-   --stack-name aws-permits-pipeline-1
+   --stack-name aws-permits-pipeline
    ```
    
 ## Contributors
