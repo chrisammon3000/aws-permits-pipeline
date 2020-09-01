@@ -115,7 +115,7 @@ Once the instance is running any SQL client such as `psql` can access the databa
 
    Using `psql`:
    ```
-   psql -h <MasterEndpointDB> -U postgres permitsDB
+   psql -h <MasterEndpointDB> -U postgres -p 5432 -d permitsDB
    ```
 
 ### Cleaning up
