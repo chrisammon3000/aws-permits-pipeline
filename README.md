@@ -72,10 +72,11 @@ These instructions will deploy a stack named `aws-permits-pipeline-1` using AWS 
    aws --region us-east-1 cloudformation deploy \
    --template-file cfn/rds-vpc.yml \
    --capabilities CAPABILITY_NAMED_IAM \
-   --stack-name aws-permits-pipeline-1
+   --stack-name aws-permits-pipeline-vpc-1
    ```
+   If deploying without the VPC you will need to update the default VPC's security group to allow connections on port 5432. This can be done through the AWS RDS console.
 
-   Note: The `serverless.yml` file contains a custom variable `cfn_stack` which references the CloudFormation `--stack-name` parameter and uses the format `[stack name]-[version]`, for example `aws-permits-pipeline-1`. The version value should match in the `rds.yml`/`rds-vpc.yml` and `serverless.yml` files.
+   *Note*: The `serverless.yml` file contains a custom variable `cfn_stack` which references the CloudFormation `--stack-name` parameter and uses the format `[stack name]-[version]`, for example `aws-permits-pipeline-1`. The version value should match in the `rds.yml`/`rds-vpc.yml` and `serverless.yml` files.
 
 2. Deploy Lambda functions with Serverless framework:
    ```
