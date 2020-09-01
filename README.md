@@ -103,7 +103,7 @@ These instructions will deploy a stack named `aws-permits-pipeline` or `aws-perm
    ```
 
 ### Accessing the database
-Once the instance is running any SQL client can access the database on port 5432 using the parameters specified in `set_parameters.sh`. To retrieve the endpoint:
+Once the instance is running any SQL client such as `psql` can access the database on port 5432 using the parameters specified in `set_parameters.sh`. To retrieve the endpoint:
    
    ```
    aws cloudformation describe-stacks \
@@ -111,12 +111,6 @@ Once the instance is running any SQL client can access the database on port 5432
    --query "Stacks[0].Outputs[?OutputKey=='MasterEndpointDB'].OutputValue" \
    --output text
    ```
-
-   1. Open the notebook `0.1-permits-eda` to run queries on the database and explore the data:
-      ```
-      cd notebooks
-      jupyter notebook
-      ```
 
 ### Cleaning up
 1. Get the S3 bucket name:
