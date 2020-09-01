@@ -276,7 +276,7 @@ Outputs:
     Description: "S3 Bucket for storing Building Permits data"
     Value: !Ref DataBucket
   AppName:
-    Descriptions: "App name"
+    Description: "App name"
     Value: !Ref AppName 
   AppVersion:
     Description: "App version"
