@@ -25,6 +25,7 @@ https://data.lacity.org/api/views/yv23-pmwf/rows.csv?accessType=DOWNLOAD
 ## Built With
 The pipeline is built on these frameworks and platforms:
 * AWS: Lambda, S3, RDS PostgreSQL, Parameter Store
+* CloudFormation
 * Serverless framework
 * Python
 * psycopg2
@@ -48,7 +49,7 @@ The following should be installed:
 
 2. Install serverless-python-requirements plugin:
    ```
-   cd aws-permits-pipeline
+   cd aws-permits-pipeline &&
    npm install --save serverless-python-requirements
    ```
 3. Run the script:
@@ -79,7 +80,7 @@ These instructions will deploy a stack named `aws-permits-pipeline` or `aws-perm
 
 2. Deploy Lambda functions with Serverless framework:
    ```
-   cd src/functions
+   cd src/functions &&
    serverless deploy
    ```
 
