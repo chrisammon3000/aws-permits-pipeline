@@ -119,7 +119,13 @@ Once the instance is running any SQL client can access the database on port 5432
       ```
 
 ### Cleaning up
-1. Get the S3 bucket name:
+1. Delete the Serverless stack:
+
+   ```
+   serverless remove
+   ```
+   
+2. Get the S3 data bucket name:
    ```
    aws cloudformation describe-stacks \
    --stack-name aws-permits-pipeline-1 \
@@ -127,11 +133,11 @@ Once the instance is running any SQL client can access the database on port 5432
    --output text
    ```
    
-2. Delete all data from the S3 bucket:
+3. Delete all data from the S3 bucket:
    ```
    aws s3 rm --recursive s3://<your_bucket_name>
    ```
-3. Delete the CloudFormation stack:
+4. Delete the CloudFormation stack:
    ```
    aws cloudformation delete-stack \
    --stack-name aws-permits-pipeline-1

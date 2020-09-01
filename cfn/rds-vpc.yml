@@ -6,7 +6,7 @@ Parameters:
     Default: "aws-permits-pipeline-vpc"
   AppVersion:
     Type: String
-    Default: 1
+    Default: 4
   VpcCIDR:
     Type: String
     Default: "10.0.0.0/24"
