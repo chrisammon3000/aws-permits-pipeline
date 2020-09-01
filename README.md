@@ -8,16 +8,18 @@
 aws-building-permits-pipeline
 ==============================
 
-An ETL pipeline for construction permits data from the [Los Angeles Open Data Portal](https://data.lacity.org/) hosted on AWS using  *Lambda*, *PostgreSQL RDS* with PostGIS, and *S3*. Running the pipeline fetches the data from the internet and loads it into an RDS instance running PostgreSQL/PostGIS.
+An ETL pipeline for construction permits data from the [Los Angeles Open Data Portal](https://data.lacity.org/) hosted on AWS using  *Lambda*, *RDS PostgreSQL*, and *S3*. Once deployed the pipeline fetches fresh data once a day from the internet and loads it into an RDS instance running PostgreSQL/PostGIS. 
+
+*Note:* The pipeline currently only runs in AWS Region *us-east-1*.
 
 ## Background
 Cited from [Building and Safety Permit Information](https://data.lacity.org/A-Prosperous-City/Building-and-Safety-Permit-Information-Old/yv23-pmwf):<br>
 >*"The Department of Building and Safety issues permits for the construction, remodeling, and repair of buildings and structures in the City of Los Angeles. Permits are categorized into building permits, electrical permits, and mechanical permits"*
 
-The raw permits data available from the [Los Angeles Open Data Portal](https://data.lacity.org/) contains missing latitude and longitude coordinates for some properties. The pipeline includes a geocoding step to enrich the data.
+The raw permits data available from the [Los Angeles Open Data Portal](https://data.lacity.org/) contains information on building and construction permits for both residential and commercial properties. 
 
 ### Data source
-Data can be downloaded directly here:<br>
+Data can be downloaded directly here (~500MB):<br>
 https://data.lacity.org/api/views/yv23-pmwf/rows.csv?accessType=DOWNLOAD
 
 ## Built With
@@ -27,7 +29,6 @@ The pipeline is built on these frameworks and platforms:
 * Python
 * psycopg2
 * PostGIS
-* US Census Bureau [TIGER](https://en.wikipedia.org/wiki/Topologically_Integrated_Geographic_Encoding_and_Referencing) data for geocoding (*to be added*)
 
 ## Getting Started
 
@@ -54,20 +55,27 @@ The following should be installed:
    ```
    bash scripts/set_parameters.sh
    ```
-   *(optional)* Edit the file `scripts/set_parameters.sh` to set the parameters for the database name, username and password.
+   *(optional)* Edit the file `scripts/set_parameters.sh` to set your own parameters for the database name, username and password.
 ### Deploy AWS Infrastructure
+These instructions will deploy a stack named `aws-permits-pipeline-1` using AWS CloudFormation:
 1. Deploy the RDS stack with or without VPC:
    
    ```
    # RDS only
-   aws cloudformation deploy --template-file cfn/rds.yml --capabilities CAPABILITY_NAMED_IAM --stack-name aws-permits-pipeline-1
+   aws --region us-east-1 cloudformation deploy \
+   --template-file cfn/rds.yml \
+   --capabilities CAPABILITY_NAMED_IAM \
+   --stack-name aws-permits-pipeline-1
    ```
    ```
    # RDS with VPC
-   aws cloudformation deploy --template-file cfn/rds-vpc.yml --capabilities CAPABILITY_NAMED_IAM --stack-name aws-permits-pipeline-1
+   aws --region us-east-1 cloudformation deploy \
+   --template-file cfn/rds-vpc.yml \
+   --capabilities CAPABILITY_NAMED_IAM \
+   --stack-name aws-permits-pipeline-1
    ```
 
-   Note: The serverlless.yml file contains a custom variable `cfn_stack` which references the CloudFormation `--stack-name` parameter and uses the format [**stack name**]-[**version**], for example *'aws-permits-pipeline-1'*. The version value should match in both the CloudFormation and Serverless .yml files.
+   Note: The `serverless.yml` file contains a custom variable `cfn_stack` which references the CloudFormation `--stack-name` parameter and uses the format `[stack name]-[version]`, for example `aws-permits-pipeline-1`. The version value should match in the `rds.yml`/`rds-vpc.yml` and `serverless.yml` files.
 
 2. Deploy Lambda functions with Serverless framework:
    ```
@@ -77,27 +85,57 @@ The following should be installed:
 
 ### Initialize the Database
    ```
-   serverless invoke --function initDatabase --stage dev --region us-east-1 --log
+   serverless invoke --function initDatabase \
+   --stage dev \
+   --region us-east-1 \
+   --log
    ```
    This installs the Postgres extensions for S3 import and PostGIS and creates a table `permits_raw`.
 
 ### Running the Pipeline
    The fetchData and loadData Lambda functions are scheduled to run once a day to fetch and load fresh data.
    ```
-   serverless invoke --function fetchData --stage dev --region us-east-1 --log
+   serverless invoke --function fetchData \
+   --stage dev \
+   --region us-east-1 \
+   --log
    ```
 
 ### Accessing the database
+Once the instance is running any SQL client can access the database on port 5432 using the parameters specified in `set_parameters.sh`. To retrieve the endpoint:
    
+   ```
+   aws cloudformation describe-stacks \
+   --stack-name aws-permits-pipeline-1 \
+   --query "Stacks[0].Outputs[?OutputKey=='MasterEndpointDB'].OutputValue" \
+   --output text
+   ```
 
-   Open the notebook `0.1-building-permits-aws-pipeline` to run queries on the database and explore the data:
-   ```
-   cd notebooks
-   jupyter notebook
-   ```
+   1. Open the notebook `0.1-permits-eda` to run queries on the database and explore the data:
+      ```
+      cd notebooks
+      jupyter notebook
+      ```
 
 ### Cleaning up
-*Under development*
+1. Get the S3 bucket name:
+   ```
+   aws cloudformation describe-stacks \
+   --stack-name aws-permits-pipeline-1 \
+   --query "Stacks[0].Outputs[?OutputKey=='DataBucket'].OutputValue" \
+   --output text
+   ```
+   
+2. Delete all data from the S3 bucket:
+   ```
+   aws s3 rm --recursive s3://<your_bucket_name>
+   ```
+3. Delete the CloudFormation stack:
+   ```
+   aws cloudformation delete-stack \
+   --stack-name aws-permits-pipeline-1
+   ```
+   
 ## Contributors
 
 **Primary (Contact) : [Gregory Lindsey](https://github.com/gclindsey)**
