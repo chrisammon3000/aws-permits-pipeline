@@ -44,7 +44,7 @@ The following should be installed:
    ```
    git clone \
        --branch master --single-branch --depth 1 --no-tags \
-       https://github.com/abk7777/building-permits-aws-pipeline.git
+       https://github.com/abk7777/aws-permits-pipeline.git
    ```
 
 2. Install serverless-python-requirements plugin:
@@ -146,15 +146,15 @@ Once the instance is running any SQL client such as `psql` can access the databa
 
 **Primary (Contact) : [Gregory Lindsey](https://github.com/gclindsey)**
 
-[contributors-shield]: https://img.shields.io/github/contributors/abk7777/building-permits-aws-pipeline.svg?style=flat-square
-[contributors-url]: https://github.com/abk7777/building-permits-aws-pipeline/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/abk7777/building-permits-aws-pipeline.svg?style=flat-square
-[forks-url]: https://github.com/abk7777/building-permits-aws-pipeline/network/members
-[stars-shield]: https://img.shields.io/github/stars/abk7777/building-permits-aws-pipeline.svg?style=flat-square
-[stars-url]: https://github.com/abk7777/building-permits-aws-pipeline/stargazers
-[issues-shield]: https://img.shields.io/github/issues/abk7777/building-permits-aws-pipeline.svg?style=flat-square
-[issues-url]: https://github.com/abk7777/building-permits-aws-pipeline/issues
-[license-shield]: https://img.shields.io/github/license/abk7777/building-permits-aws-pipeline.svg?style=flat-square
-[license-url]: https://github.com/abk7777/building-permits-aws-pipeline/blob/master/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/abk7777/aws-permits-pipeline.svg?style=flat-square
+[contributors-url]: https://github.com/abk7777/aws-permits-pipeline/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/abk7777/aws-permits-pipeline.svg?style=flat-square
+[forks-url]: https://github.com/abk7777/aws-permits-pipeline/network/members
+[stars-shield]: https://img.shields.io/github/stars/abk7777/aws-permits-pipeline.svg?style=flat-square
+[stars-url]: https://github.com/abk7777/aws-permits-pipeline/stargazers
+[issues-shield]: https://img.shields.io/github/issues/abk7777/aws-permits-pipeline.svg?style=flat-square
+[issues-url]: https://github.com/abk7777/aws-permits-pipeline/issues
+[license-shield]: https://img.shields.io/github/license/abk7777/aws-permits-pipeline.svg?style=flat-square
+[license-url]: https://github.com/abk7777/aws-permits-pipeline/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/gregory-lindsey/
