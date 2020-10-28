@@ -8,7 +8,7 @@
 aws-permits-pipeline
 ==============================
 
-An ETL pipeline for construction permits data from the [Los Angeles Open Data Portal](https://data.lacity.org/) hosted on AWS using  *Lambda*, *RDS PostgreSQL*, and *S3*. Once deployed the pipeline fetches fresh data once a day from the internet and loads it into an RDS instance running PostgreSQL/PostGIS. 
+An ETL pipeline for construction permits data from the [Los Angeles Open Data Portal](https://data.lacity.org/) hosted on AWS using  Lambda, RDS PostgreSQL, and S3. Once deployed the pipeline fetches fresh data once a day from the internet and loads it into an RDS instance running PostgreSQL/PostGIS. 
 
 ## Background
 Cited from [Building and Safety Permit Information](https://data.lacity.org/A-Prosperous-City/Building-and-Safety-Permit-Information-Old/yv23-pmwf):<br>
