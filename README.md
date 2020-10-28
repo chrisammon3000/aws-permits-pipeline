@@ -10,8 +10,6 @@ aws-permits-pipeline
 
 An ETL pipeline for construction permits data from the [Los Angeles Open Data Portal](https://data.lacity.org/) hosted on AWS using  *Lambda*, *RDS PostgreSQL*, and *S3*. Once deployed the pipeline fetches fresh data once a day from the internet and loads it into an RDS instance running PostgreSQL/PostGIS. 
 
-*Note:* The pipeline currently only runs in AWS Region *us-east-1*.
-
 ## Background
 Cited from [Building and Safety Permit Information](https://data.lacity.org/A-Prosperous-City/Building-and-Safety-Permit-Information-Old/yv23-pmwf):<br>
 >*"The Department of Building and Safety issues permits for the construction, remodeling, and repair of buildings and structures in the City of Los Angeles. Permits are categorized into building permits, electrical permits, and mechanical permits"*
